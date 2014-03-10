@@ -2,6 +2,7 @@
 import hashlib
 import uuid
 import string 
+import getpass 
 users = {}
 status = ""
 
@@ -21,26 +22,23 @@ while (status != "q"):
 		if username in users:
 			print("This username already exists.")
 		else:
-			password = raw_input("Create password: ")
+			password = getpass.getpass()
 			hashed_password = hash_password(password)
 			users[username]= hashed_password
 			print("\n User created! \n")
 	elif (status == "y"):
 		exusername = raw_input("Enter user name: ")
 		if exusername in users:
-			expassword = raw_input("Enter password: ")
-			if (check_password(hashed_password, expassword)):
+			expassword = getpass.getpass()
+			count = 3
+			while ((not check_password(hashed_password, expassword)) and count > 0):
+				print("password is not correct\n you have %s more tries") % count
+				count-= 1
+				expassword = getpass.getpass()
+			if (count != 0):
 				print ("login successful")
-			else:
-				count = 3
-				while (expassword != users[exusername] and count > 0):
-					print("password is not correct\n you have %s more tries") % count
-					count-= 1
-					expassword = raw_input("Enter password: ")
 				
 		else:
 			print("user does not exist")
-
-
 
 

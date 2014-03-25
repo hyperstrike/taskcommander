@@ -1,1 +1,1 @@
-a minimal productivity manager
+a minimal productivity manager para todos

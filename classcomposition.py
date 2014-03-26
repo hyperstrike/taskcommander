@@ -1,30 +1,54 @@
-from datetime import datetime
-time = datetime()
-#core idea here is that the user class contains projects and that the project class contains tasks
-#we make project id's unique by appending the administrator-given user id to the date/time (even handles concurrent users!)
+import time
+
 class User:
 	def __init__(self, name, userID):
 		self.name = name
 		self.userID = userID
 		self.projects = {}
 	def addProject(self, projectName):
-		projects[userID + makeProjectID()] = project(projectName) #project(name) is instantiation of project constructor contained in user class
-
+		self.projects[projectName] = Project(projectName) #only problem with this is you can't name projects the same thing
 
 class Project:
 	def __init__(self, name):
 		self.name = name
 		self.tasks = {}
-	def makeProjectID(self):
-		return str(time.days, time.month, time.minutes, time.seconds, time.microseconds)
 	def addTask(self, taskName):
-		tasks[userID + makeProjectID()+ makeTaskID()]= task(taskName)
+		self.tasks[taskName] = Task(taskName) #can't have duplicate task names in same project 
+	def setDescription(self, ProjectDescription):
+		self.description = ProjectDescription
+
 
 class Task:
 	def __init__(self, name):
 		self.name = name
 		self.completion = False
 
-	def makeTaskID(self):
-		return str(time.days, time.month, time.minutes, time.seconds, time.microseconds)
+
+
+username = raw_input("Enter username: ")
+IDtag = raw_input("Enter ID: ")
+newUser = User(username, IDtag)
+s = raw_input("Enter (c) if you would like to create a new project or\n (s) if you would like to select an existing project and create new task\n")
+if (s == 'c'):
+	projectN = raw_input("Enter name of Project: ")
+	newUser.addProject(projectN)
+	UserProject = newUser.projects[projectN]
+	projectD = raw_input("Enter description of Project: ")
+	UserProject.setDescription(projectD)
+	t = raw_input"Add tasks, enter (Q) when finished \n"
+	while (t != "Q"):
+		taskN = raw_input("Enter task name: ")
+		UserProject.addTask(taskN)
+		ProjectTask = UserProject.tasks[taskN]
+
+
+	
+	d = raw_input("Enter tasks for your new project, once finished enter (D)\n")
+	while (d != "D"):
+		newUserProject.addTask
+
+elif (s == 's'):
+	print newUser.projects.values()
+else:
+	print "Please enter a valid input"
 

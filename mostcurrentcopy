@@ -4,6 +4,7 @@ import hashlib
 import uuid
 import string 
 import shelve 
+import sys
 
 
 class Users:
@@ -123,7 +124,7 @@ def DeleteProject(someUser, projectName):
 	if projectName in someUser.projects[projectName]:
 		del someUser.projects[projectName]
 
-def createTask(projectName): #!!!
+def createTask(projectName): ###make task start date the same as project start date, make project end date inferred from task end date
     name = raw_input("Enter the name of the task")
     projectName.addTask(name)
     description = raw_input("Enter a short description of the task")
@@ -166,10 +167,12 @@ def mainMenu(userid):    #general format for interacting with the database
 			active_project = raw_input("Select the active project")
 			if (someUser.userID == someUser.projects[active_project].getProjectManager()):
 				PMdisplay(active_project, someUser.userID)
-				#add something here about exiting program (continues through function when you quit)
+				sys.exit(0)
 			else:
 				viewDisplay(active_project, someUser.userID)
-		else: 
+		elif (status == 'q'):
+			break
+		else:	
 			print "Please enter a valid input"
 	SessionOne.users[userid] = someUser #2
 	SessionOne.saveProgramInformation()	#3
@@ -208,11 +211,20 @@ def PMdisplay(projectname, userID):
 			newuser = raw_input("Enter user id of user who can view")
 			someProject.addUsercanview(newuser)
 		elif (status == 'q'):
-			break
+			print someProject.name
+			print someProject.ProjectManager
+			print someProject.tasks
+			print someProject.userscanview
+			print someProject.getEndDate()
+			print someProject.getStartDate()
+			someUser = SessionOne.users[userID]
+			someUser.projects[projectname] = someProject
+			SessionOne.users[userID] = someUser 
+			print SessionOne.users[userID].projects[projectname].getStartDate()
+			SessionOne.saveProgramInformation()
+			sys.exit(0)
 		else:
 			print('Please enter valid input')
-	SessionOne.users[userID].projects[projectname] = someProject
-	SessionOne.saveProgramInformation()
 
 
 def login():

@@ -8,18 +8,18 @@ users = users("Session One")
 #instantiate users and pass userid 
 class CreateAccount:
 	def __init__(self):
-		self.firstname = #field from view with First Name
-		self.lastname = #field from view with Last Name
-		self.userID#field from view with ID Number
+		self.firstname = MainWindow.getFirstName()
+		self.lastname = MainWindow.getLastName()
+		self.userID = MainWindow.getEmployeeID()
 		#need to add something in view with accessStatus 
-		self.birthdate = #field from view with Date of Birth
-	def addUser(self): #initializes User 
+		self.birthdate = MainWindow.getDOB()
+	def addUser(self): 
 		users.addUser(firstname, lastname, userID, birthdate))
 
 class Login: 
 	def __init__(self):
-		self.username = #field from view with username 
-		self.password = #field  from view with password 
+		self.username = MainWindow.getUserName()
+		self.password = MainWindow.getPassword()
 		self.userID = #field from view with user identification 
 		self.hashedpassword = users[userID].getpassword()
 
@@ -59,3 +59,8 @@ class CreateTask: #needs user ID from Login and Project Name from CreateProject
 	def CreateTask:
 		CreatedTask = users[Login.userID].projects[CreateProject.name]
 		Users[CreateAccount.userID].projects[CreateProject.name].addTask(self.name)
+
+
+
+
+		

@@ -7,7 +7,6 @@ import string
 import shelve 
 import sys
 
-
 class Users:
 	def __init__(self, name):
 		self.name = name

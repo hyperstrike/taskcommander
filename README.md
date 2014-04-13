@@ -1,1 +1,4 @@
-a minimal productivity manager para todos
+- model: contains classes
+- modelutilities: contains miscellaneous functions
+- mostcurrentcopy: old login application
+- windowtest.py: view

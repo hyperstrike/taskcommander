@@ -1,4 +1,4 @@
-#!/user/bin/python3
+#!/usr/bin/python3
 import sys
 import string
 import tkinter as tk
@@ -19,7 +19,23 @@ from tkinter import ttk
 
 class MainWindow(tk.Frame):
     counter = 0
-    
+    #login variables
+    login_userName = "invalid"
+    login_password = "invalid"
+    #account variables
+    account_firstName = "invalid"
+    account_lastName = "invalid"
+    account_employeeID = "invalid"
+    account_DOB = "invalid"
+    acount_type = "invalid"
+    #task variables
+    task_name = "invalid"
+    task_description = "invalid"
+    task_ownerID = "invalid"
+    task_dueDate = "invalid"
+
+
+
     def __init__(self, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
         

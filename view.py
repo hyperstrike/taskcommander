@@ -27,7 +27,7 @@ class MainWindow(tk.Frame):
     account_lastName = "invalid"
     account_employeeID = "invalid"
     account_DOB = "invalid"
-    acount_type = "invalid"
+    account_type = "invalid"
     #task variables
     task_name = "invalid"
     task_description = "invalid"
@@ -129,9 +129,78 @@ class MainWindow(tk.Frame):
         tk.Label(self, text="Task Due Date:").grid(row=4, column=7)
         self.task_dueDate = tk.Label(self, text='invalid')
         self.task_dueDate.grid(row=4, column=8)
+
+        #create project field
+        self.button = tk.Button(self, text="Create Project", command=self.create_project_window)
+        self.button.grid(row=5, column=0)
         
-        tk.Label(self, text="*").grid(row=5, column=0, pady=5)
-        tk.Label(self, text="TaskCommander Window Testing Module *BETA*").grid(row=6, column=0)
+        tk.Label(self, text="*").grid(row=6, column=0, pady=5)
+        tk.Label(self, text="TaskCommander Window Testing Module *BETA*").grid(row=7, column=0)
+
+    def create_account_window(self):
+        self.counter += 1
+        accWin = tk.Toplevel(self)
+        accWin.wm_title("Create Account")
+        tk.Label(accWin, text="First Name:").grid(row=0, column=0, padx=6, pady=6, sticky=W)
+        tk.Label(accWin, text="Last Name:").grid(row=0, column=2, padx=6, pady=6, sticky=W)
+        tk.Label(accWin, text="Employee ID:").grid(row=1, column=0, padx=6, pady=6, sticky=W)
+        tk.Label(accWin, text="D.O.B. (MM/DD/YYYY)").grid(row=1, column=2, padx=6, pady=6, sticky=W)
+        
+        accWin.e1 = Entry(accWin)
+        accWin.e2 = Entry(accWin)
+        accWin.e3 = Entry(accWin)
+        accWin.e4 = Entry(accWin)
+        
+        accWin.e1.grid(row=0, column=1, padx=6, pady=6, sticky=W)
+        accWin.e2.grid(row=0, column=3, padx=6, pady=6, sticky=W)
+        accWin.e3.grid(row=1, column=1, padx=6, pady=6, sticky=W)
+        accWin.e4.grid(row=1, column=3, padx=6, pady=6, sticky=W)
+
+    def create_project_window(self):
+        self.counter += 1
+        projWin = tk.Toplevel(self)
+        projWin.wm_title("Create Project")
+        tk.Label(projWin, text="Project Name:").grid(row=0, column=0, padx=6, pady=6, sticky=W)
+        tk.Label(projWin, text="Description:").grid(row=1, column=0, padx=6, pady=6, sticky=W)
+        tk.Label(projWin, text="Owner ID:").grid(row=2, column=0, padx=6, pady=6, sticky=W)
+        tk.Label(projWin, text="Associated Tasks:").grid(row=3, column=0, padx=6, pady=6, sticky=W)
+        tk.Label(projWin, text="Task Name:").grid(row=4, column=0, padx=6, pady=6, sticky=W)
+        tk.Label(projWin, text="Task Due Date:").grid(row=4, column=2, padx=6, pady=6, sticky=W)
+        tk.Label(projWin, text="Add Project Viewers:").grid(row=6, column=0, padx=6, pady=6, sticky=W)
+        tk.Label(projWin, text="Viewer ID:").grid(row=7, column=0, padx=6, pady=6, sticky=W)
+        
+        projWin.e1 = Entry(projWin)
+        projWin.e2 = Entry(projWin)
+        projWin.e3 = Entry(projWin)
+        projWin.e4 = Entry(projWin)
+        projWin.e5 = Entry(projWin)
+        projWin.e6 = Entry(projWin)
+
+        projWin.e1.grid(row=0, column=1, padx=6, pady=6, sticky=W)
+        projWin.e2.grid(row=1, column=1, padx=6, pady=6, sticky=W)
+        projWin.e3.grid(row=2, column=1, padx=6, pady=6, sticky=W)
+        projWin.e4.grid(row=4, column=1, padx=6, pady=6, sticky=W)
+        projWin.e5.grid(row=4, column=3, padx=6, pady=6, sticky=W)
+        projWin.taskButton = tk.Button(logWin, text="Add Task", command=commit_task)
+        projWin.taskButton.grid(row=5, column=1, padx=6, pady=6, sticky=W)
+        projWin.e6.grid(row=7, column=1, padx=6, pady=6, sticky=W)
+
+        def commit_task():
+            print("task commit")
+            #add task to dictionary
+
+        def commit_viewer():
+            print("viewer commit")
+            #add viewer to dictionary
+
+        projWin.viewerButton = tk.Button(logWin, text="Add Viewer", command=commit_viewer)
+        projWin.viewerButton.grid(row=7, column=2, padx=6, pady=6, sticky=W)
+
+        projWin.acceptButton = tk.Button(logWin, text="Accept", command=commit_project)
+        projWin.cancelButton = tk.Button(logWin, text="Cancel", command=projWin.destroy)
+        projWin.acceptButton.grid(row=8, column=0, padx=6, pady=6, sticky=W)
+        projWin.cancelButton.grid(row=8, column=1, padx=6, pady=6, sticky=W)
+
     
     def create_login_window(self):
         self.counter += 1
@@ -149,12 +218,15 @@ class MainWindow(tk.Frame):
         def commit_login():
             self.login_userName['text'] = logWin.e1.get()
             self.login_password['text'] = logWin.e2.get()
+            logWin.destroy()
         
+        logWin.newAccountButton = tk.Button(logWin, text="New Account", command=self.create_account_window)
         logWin.acceptButton = tk.Button(logWin, text="Accept", command=commit_login)
         logWin.cancelButton = tk.Button(logWin, text="Cancel", command=logWin.destroy)
+        logWin.newAccountButton.grid(row=2, column=0, padx=6, pady=6, sticky=W)
         logWin.acceptButton.grid(row=2, column=1, padx=6, pady=6, sticky=W)
         logWin.cancelButton.grid(row=2, column=1, padx=6, pady=6, sticky=E)
-
+        
     def create_account_window(self):
         self.counter += 1
         accWin = tk.Toplevel(self)
@@ -169,27 +241,30 @@ class MainWindow(tk.Frame):
         accWin.e3 = Entry(accWin)
         accWin.e4 = Entry(accWin)
         
-        accWin.e1.grid(row=0, column=1, padx=3, pady=3, sticky=W)
-        accWin.e2.grid(row=0, column=3, padx=3, pady=3, sticky=W)
-        accWin.e3.grid(row=1, column=1, padx=3, pady=3, sticky=W)
-        accWin.e4.grid(row=1, column=3, padx=3, pady=3, sticky=W)
-        
+        accWin.e1.grid(row=0, column=1, padx=6, pady=6, sticky=W)
+        accWin.e2.grid(row=0, column=3, padx=6, pady=6, sticky=W)
+        accWin.e3.grid(row=1, column=1, padx=6, pady=6, sticky=W)
+        accWin.e4.grid(row=1, column=3, padx=6, pady=6, sticky=W)
+
         #select access level
+        def set_admin():
+            is_admin = True
+
         tk.Label(accWin, text="Select account type:").grid(row=3, column=0, padx=6, pady=6)
         var = IntVar()
-        accWin.r1 = tk.Radiobutton(accWin, text="Global Admin", variable=var, value=1, command=None)
-        accWin.r2 = tk.Radiobutton(accWin, text="Project Manager", variable=var, value=2, command=None)
-        accWin.r3 = tk.Radiobutton(accWin, text="Task Receiver", variable=var, value=3, command=None)
+        accWin.r1 = tk.Radiobutton(accWin, text="Project Manager", variable=var, value=1, command=None)
+        accWin.r2 = tk.Radiobutton(accWin, text="Task Receiver", variable=var, value=2, command=set_admin)
         accWin.r1.grid(row=4, column=0)
         accWin.r2.grid(row=4, column=1)
-        accWin.r3.grid(row=4, column=2)
+        
         
         def commit_account():
             self.account_firstName['text'] = accWin.e1.get()
             self.account_lastName['text'] = accWin.e2.get()
-            self.account_DOB['text'] = accWin.e3.get()
-            self.account_type['text'] = accWin.e4.get()
+            self.account_employeeID['text'] = accWin.e3.get()
+            self.account_DOB['text'] = accWin.e4.get()
             #account type?
+            accWin.destroy()
             
         accWin.acceptButton = tk.Button(accWin, text="Accept", command=commit_account)
         accWin.cancelButton = tk.Button(accWin, text="Cancel", command=accWin.destroy)
@@ -220,6 +295,7 @@ class MainWindow(tk.Frame):
             self.task_description['text'] = tskWin.e2.get()
             self.task_ownerID['text'] = tskWin.e3.get()
             self.task_dueDate['text'] = tskWin.e4.get()
+            tskWin.destroy()
             
         tskWin.acceptButton = tk.Button(tskWin, text="Accept", command=commit_task)
         tskWin.cancelButton = tk.Button(tskWin, text="Cancel", command=tskWin.destroy)

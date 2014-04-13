@@ -38,8 +38,9 @@ class Users:
 SessionOne = Users('Session_One')
 
 class User:
-	def __init__(self, name, birthdate, userID, accessStatus):
-		self.name = name
+	def __init__(self, firstname, lastname, birthdate, userID, accessStatus):
+		self.firstname = firstname
+		self.lastname = lastname
 		self.birthdate = birthdate
 		self.userID = userID
 		self.accessStatus = accessStatus

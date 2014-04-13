@@ -1,3 +1,4 @@
+#!/usr/bin/python3 -tt
 import getpass 
 import datetime
 import hashlib
@@ -20,8 +21,8 @@ class Users:
 
 	def saveProgramInformation(self):
 		self.taskcommanderS = shelve.open('taskcommanderS')
-		listkeys = self.users.keys()
-		listvalues = self.users.values()
+		listkeys = list(self.users.keys())
+		listvalues = list(self.users.values())
 		i = 0
 		numberofusers = len(self.users)
 		while (i < numberofusers):
@@ -31,7 +32,7 @@ class Users:
 
 	def printdb(self):
 		self.taskcommanderS = shelve.open('taskcommanderS')
-		print (self.taskcommanderS)
+		print(self.taskcommanderS)
 
 
 SessionOne = Users('Session_One')
@@ -125,15 +126,15 @@ def DeleteProject(someUser, projectName):
 		del someUser.projects[projectName]
 
 def createTask(projectName): ###make task start date the same as project start date, make project end date inferred from task end date
-    name = raw_input("Enter the name of the task")
+    name = input("Enter the name of the task")
     projectName.addTask(name)
-    description = raw_input("Enter a short description of the task")
+    description = input("Enter a short description of the task")
     projectName.tasks[name].setDescription(description)
-    start = raw_input("Enter the start date for the task")
+    start = input("Enter the start date for the task")
     if start == "":
         start = str(datetime.date.today())
-	projectName.tasks[name].setStartDate(start)
-    end = raw_input("Enter the deadline for the task")
+    projectName.tasks[name].setStartDate(start)
+    end = input("Enter the deadline for the task")
     if end > projectName.getEndDate(): # if task end date is later than project end date,
         projectName.setEndDate(end) # update project's end date
     projectName.tasks[name].setTaskEndDate(end)
@@ -148,23 +149,23 @@ def mainMenu(userid):    #general format for interacting with the database
 	someUser = SessionOne.users[userid]  #1
 	while (status != 'q'):
 		print("Welcome to Task Commander")
-		status = raw_input("Enter (c) to create a new project and (s) to select an existing project.")
+		status = input("Enter (c) to create a new project and (s) to select an existing project.")
 		if (status == 'c'):
-			name = raw_input("Enter the name of your project")
+			name = input("Enter the name of your project")
 			someUser.addProject(name)
-			description = raw_input("Enter a short description of your project")
+			description = input("Enter a short description of your project")
 			someUser.projects[name].setDescription(description)
-			start = raw_input("Enter the start date for the project")
+			start = input("Enter the start date for the project")
 			if start == " ": 
 				start = str(datetime.date.today())
 			someUser.projects[name].setStartDate(start)
-			end = raw_input("Enter the end date for the project")
+			end = input("Enter the end date for the project")
 			someUser.projects[name].setEndDate(end)
-			identification = raw_input("Confirm user id")
+			identification = input("Confirm user id")
 			someUser.projects[name].setProjectManager(identification)
 		elif (status == 's'):
-			print someUser.projects
-			active_project = raw_input("Select the active project")
+			print(someUser.projects)
+			active_project = input("Select the active project")
 			if (someUser.userID == someUser.projects[active_project].getProjectManager()):
 				PMdisplay(active_project, someUser.userID)
 				sys.exit(0)
@@ -173,7 +174,7 @@ def mainMenu(userid):    #general format for interacting with the database
 		elif (status == 'q'):
 			break
 		else:	
-			print "Please enter a valid input"
+			print("Please enter a valid input")
 	SessionOne.users[userid] = someUser #2
 	SessionOne.saveProgramInformation()	#3
 
@@ -182,45 +183,45 @@ def viewDisplay(projectname, userID):
 	print(someProject.name)
 	print(someProject.getdescription())
 	print(someProject.tasks)
-	activetask = raw_input("select task to complete")
+	activetask = input("select task to complete")
 	someProject[activetask].completion = True
 
 def PMdisplay(projectname, userID):
-	print SessionOne.users[userID].projects[projectname]
+	print(SessionOne.users[userID].projects[projectname])
 	someProject = SessionOne.users[userID].projects[projectname]
 	print("Welcome to the Display.")
-	print someProject.name
-	print someProject.ProjectManager
-	print someProject.tasks
-	print someProject.userscanview
-	print someProject.getEndDate()
-	print someProject.getStartDate()
+	print(someProject.name)
+	print(someProject.ProjectManager)
+	print(someProject.tasks)
+	print(someProject.userscanview)
+	print(someProject.getEndDate())
+	print(someProject.getStartDate())
 	status = ''
 	while (status != 'q'):
-		status = raw_input("(a) add task. (d) delete task. (e) edit dates (f) add user ")
+		status =input("(a) add task. (d) delete task. (e) edit dates (f) add user ")
 		if (status == 'a'):
 			createTask(someProject)
 		elif (status == 'd'):
 			DeleteTask(someProject)
 		elif (status == 'e'):
-			startdate = raw_input("Enter new start date")
+			startdate = input("Enter new start date")
 			someProject.setStartDate(startdate)
-			enddate = raw_input("Enter new end date")
+			enddate = input("Enter new end date")
 			someProject.setEndDate(enddate)
 		elif (status == 'f'):
-			newuser = raw_input("Enter user id of user who can view")
+			newuser = input("Enter user id of user who can view")
 			someProject.addUsercanview(newuser)
 		elif (status == 'q'):
-			print someProject.name
-			print someProject.ProjectManager
-			print someProject.tasks
-			print someProject.userscanview
-			print someProject.getEndDate()
-			print someProject.getStartDate()
+			print(someProject.name)
+			print(someProject.ProjectManager)
+			print(someProject.tasks)
+			print(someProject.userscanview)
+			print(someProject.getEndDate())
+			print(someProject.getStartDate())
 			someUser = SessionOne.users[userID]
 			someUser.projects[projectname] = someProject
 			SessionOne.users[userID] = someUser 
-			print SessionOne.users[userID].projects[projectname].getStartDate()
+			print(SessionOne.users[userID].projects[projectname].getStartDate())
 			SessionOne.saveProgramInformation()
 			sys.exit(0)
 		else:
@@ -231,24 +232,24 @@ def login():
 	SessionOne.returnProgramtoPastState()
 	status = ''
 	while (status != 'q'):
-		status = raw_input("Are you an existing user? Enter (y/n). Press (q) to quit")
+		status = input("Are you an existing user? Enter (y/n). Press (q) to quit")
 		if (status == 'y'):
 			SessionOne.printdb()
-			username = raw_input("Enter username")
-			userid = raw_input("Enter userid")
+			username = input("Enter username")
+			userid = input("Enter userid")
 			expassword = getpass.getpass()
 			if (check_password(SessionOne.users[userid].getPassword(), expassword)):
 				mainMenu(userid)
 			break
 		elif (status == 'n'):
-			name =raw_inrput("Enter your full name")
-			birthdate =raw_input("Enter your birthdate 'MM/DD/YYYY")
-			Uid = raw_input("Enter your user identification number")
+			name = input("Enter your full name")
+			birthdate = input("Enter your birthdate 'MM/DD/YYYY")
+			Uid = input("Enter your user identification number")
 			if Uid in SessionOne.users:
-				print ('user identification number already exists')
-			status = raw_input("Select (A) for administrator and (U) for user")
+				print('user identification number already exists')
+			status = input("Select (A) for administrator and (U) for user")
 			SessionOne.addUser(name, birthdate, Uid, status)
-			username = raw_input("Set your username (you may edit this later): ")
+			username = input("Set your username (you may edit this later): ")
 			SessionOne.users[Uid].setUserName(username)
 			password = getpass.getpass()
 			SessionOne.users[Uid].setPassword(password)

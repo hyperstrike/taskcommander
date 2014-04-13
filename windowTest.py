@@ -34,6 +34,42 @@ class MainWindow(tk.Frame):
     task_ownerID = "invalid"
     task_dueDate = "invalid"
 
+    #login getters
+    def getUserName(self):
+    	return login_userName
+
+    def getPassword(self):
+    	return login_password
+
+    #account getters
+    def getFirstName(self):
+    	return account_firstName
+
+    def getLastName(self):
+    	return account_lastName
+
+    def getEmployeeID(self):
+    	return account_employeeID
+
+    def getDOB(self):
+    	return account_DOB
+
+    def getAccountType(self):
+    	return account_type
+
+    #task getters
+    def getTaskName(self):
+    	return task_name
+
+    def getTaskDescription(self):
+    	return task_description
+
+    def getOwnerID(self):
+    	return task_ownerID
+
+    def getTaskDueDate(self):
+    	return task_dueDate
+
 
 
     def __init__(self, *args, **kwargs):
@@ -55,46 +91,47 @@ class MainWindow(tk.Frame):
         self.button = tk.Button(self, text="Log In", command=self.create_login_window)
         self.button.grid(row=2, column=0, pady=5)
         tk.Label(self, text="User:").grid(row=2, column=1)
-        self.ret1 = tk.Label(self, text='invalid')
-        self.ret1.grid(row=2, column=2)
+        self.login_userName = tk.Label(self, text='invalid')
+        self.login_userName.grid(row=2, column=2)
         tk.Label(self, text="Pass:").grid(row=2, column=3)
-        self.ret2 = tk.Label(self, text='invalid')
-        self.ret2.grid(row=2, column=4)
+        self.login_password = tk.Label(self, text='invalid')
+        self.login_password.grid(row=2, column=4)
         
         #create account field
         self.button = tk.Button(self, text="Create Account", command=self.create_account_window)
         self.button.grid(row=3, column=0, pady=5)
         tk.Label(self, text="First Name:").grid(row=3, column=1)
-        self.ret3 = tk.Label(self, text='invalid')
-        self.ret3.grid(row=3, column=2)
+        self.account_firstName = tk.Label(self, text='invalid')
+        self.account_firstName.grid(row=3, column=2)
         tk.Label(self, text="Last Name:").grid(row=3, column=3)
-        self.ret4 = tk.Label(self, text='invalid')
-        self.ret4.grid(row=3, column=4)
+        self.account_lastName = tk.Label(self, text='invalid')
+        self.account_lastName.grid(row=3, column=4)
         tk.Label(self, text="ID Number:").grid(row=3, column=5)
-        self.ret5 = tk.Label(self, text='invalid')
-        self.ret5.grid(row=3, column=6)
+        self.account_employeeID = tk.Label(self, text='invalid')
+        self.account_employeeID.grid(row=3, column=6)
         tk.Label(self, text="Date of Birth:").grid(row=3, column=7)
-        self.ret6 = tk.Label(self, text='invalid')
-        self.ret6.grid(row=3, column=8)
+        self.account_DOB = tk.Label(self, text='invalid')
+        self.account_DOB.grid(row=3, column=8)
+        #add in TYPE field
         
         #create task field
         self.button = tk.Button(self, text="Create Task", command=self.create_task_window)
         self.button.grid(row=4, column=0, pady=5)
         tk.Label(self, text="Task Name:").grid(row=4, column=1)
-        self.taskRet1 = tk.Label(self, text='invalid')
-        self.taskRet1.grid(row=4, column=2)
+        self.task_name = tk.Label(self, text='invalid')
+        self.task_name.grid(row=4, column=2)
         tk.Label(self, text="Task Description:").grid(row=4, column=3)
-        self.taskRet2 = tk.Label(self, text='invalid')
-        self.taskRet2.grid(row=4, column=4)
+        self.task_description = tk.Label(self, text='invalid')
+        self.task_description.grid(row=4, column=4)
         tk.Label(self, text="Task Owner ID:").grid(row=4, column=5)
-        self.taskRet3 = tk.Label(self, text='invalid')
-        self.taskRet3.grid(row=4, column=6)
+        self.task_ownerID = tk.Label(self, text='invalid')
+        self.task_ownerID.grid(row=4, column=6)
         tk.Label(self, text="Task Due Date:").grid(row=4, column=7)
-        self.taskRet4 = tk.Label(self, text='invalid')
-        self.taskRet4.grid(row=4, column=8)
+        self.task_dueDate = tk.Label(self, text='invalid')
+        self.task_dueDate.grid(row=4, column=8)
         
         tk.Label(self, text="*").grid(row=5, column=0, pady=5)
-        tk.Label(self, text="TaskCommander Window Testing Module *ALPHA*").grid(row=6, column=0)
+        tk.Label(self, text="TaskCommander Window Testing Module *BETA*").grid(row=6, column=0)
     
     def create_login_window(self):
         self.counter += 1
@@ -110,8 +147,8 @@ class MainWindow(tk.Frame):
         logWin.e2.grid(row=1, column=1, padx=6, pady=6, sticky=W)
         
         def commit_login():
-            self.ret1['text'] = logWin.e1.get()
-            self.ret2['text'] = logWin.e2.get()
+            self.login_userName['text'] = logWin.e1.get()
+            self.login_password['text'] = logWin.e2.get()
         
         logWin.acceptButton = tk.Button(logWin, text="Accept", command=commit_login)
         logWin.cancelButton = tk.Button(logWin, text="Cancel", command=logWin.destroy)
@@ -148,10 +185,10 @@ class MainWindow(tk.Frame):
         accWin.r3.grid(row=4, column=2)
         
         def commit_account():
-            self.ret3['text'] = accWin.e1.get()
-            self.ret4['text'] = accWin.e2.get()
-            self.ret5['text'] = accWin.e3.get()
-            self.ret6['text'] = accWin.e4.get()
+            self.account_firstName['text'] = accWin.e1.get()
+            self.account_lastName['text'] = accWin.e2.get()
+            self.account_DOB['text'] = accWin.e3.get()
+            self.account_type['text'] = accWin.e4.get()
             #account type?
             
         accWin.acceptButton = tk.Button(accWin, text="Accept", command=commit_account)
@@ -179,10 +216,10 @@ class MainWindow(tk.Frame):
         tskWin.e4.grid(row=2, column=3, padx=6, pady=6, sticky=W)
         
         def commit_task():
-            self.taskRet1['text'] = tskWin.e1.get()
-            self.taskRet2['text'] = tskWin.e2.get()
-            self.taskRet3['text'] = tskWin.e3.get()
-            self.taskRet4['text'] = tskWin.e4.get()
+            self.task_name['text'] = tskWin.e1.get()
+            self.task_description['text'] = tskWin.e2.get()
+            self.task_ownerID['text'] = tskWin.e3.get()
+            self.task_dueDate['text'] = tskWin.e4.get()
             
         tskWin.acceptButton = tk.Button(tskWin, text="Accept", command=commit_task)
         tskWin.cancelButton = tk.Button(tskWin, text="Cancel", command=tskWin.destroy)

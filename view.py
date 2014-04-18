@@ -1,23 +1,16 @@
 #!/usr/bin/python3
-import sys
-import string
+import os,sys,string, calendar, time
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 
-# This program was built upon Bryan Oakley's Toplevel example
-# on stackoverflow.com
 
-# It has been modified to test generation and data collection of windows
-# generated from clicking on options from the main window
+ALL=N+S+E+W
+numButtons = 5
+buttonBounds = [5,6,7,8,9]
 
-# TODO:
-# - additional field formatting for dates and ID numbers
-# - determining how to obtain which access level the user chose
-# - refine look of GUI
-# - integration
 
-class MainWindow(tk.Frame):
+class Application(Frame):
     counter = 0
     #login variables
     login_userName = "invalid"
@@ -33,278 +26,551 @@ class MainWindow(tk.Frame):
     task_description = "invalid"
     task_ownerID = "invalid"
     task_dueDate = "invalid"
+    #calendar variables *Thx Teresa!*
+    strdays = "Mon Tue Wed Thu Fri Sat Sun"
+    dictmonths = {'1':'Jan','2':'Feb','3':'Mar',
+                  '4':'Apr','5':'May','6':'Jun',
+                  '7':'Jul','8':'Aug','9':'Sep',
+                  '10':'Oct','11':'Nov','12':'Dec'}
+ 
+    year = time.localtime()[0]
+    month = time.localtime()[1]
+    day = time.localtime()[2]
+    strdate = (str(year) + "/" + dictmonths[str(month)] + "/" + str(day))
 
     #login getters
     def getUserName(self):
-    	return login_userName
+     return login_userName
 
     def getPassword(self):
-    	return login_password
+     return login_password
 
     #account getters
     def getFirstName(self):
-    	return account_firstName
+     return account_firstName
 
     def getLastName(self):
-    	return account_lastName
+     return account_lastName
 
     def getEmployeeID(self):
-    	return account_employeeID
+     return account_employeeID
 
     def getDOB(self):
-    	return account_DOB
+     return account_DOB
 
     def getAccountType(self):
-    	return account_type
+     return account_type
 
     #task getters
     def getTaskName(self):
-    	return task_name
+     return task_name
 
     def getTaskDescription(self):
-    	return task_description
+     return task_description
 
     def getOwnerID(self):
-    	return task_ownerID
+     return task_ownerID
 
     def getTaskDueDate(self):
-    	return task_dueDate
+     return task_dueDate
+        
 
 
+    def __init__(self,master=None):
+        Frame.__init__(self,master)
+        #self.wm_title('Task Commander Test GUI')
+        self.grid(sticky=ALL)
 
-    def __init__(self, *args, **kwargs):
-        tk.Frame.__init__(self, *args, **kwargs)
-        
-        #info bar
-        tk.Label(self, text="Window to Test").grid(row=0, column=0, pady=5)
-        tk.Label(self, text="=============").grid(row=1, column=0)
-        tk.Label(self, text="Return Value #1").grid(row=0, column=2)
-        tk.Label(self, text="=============").grid(row=1, column=2)
-        tk.Label(self, text="Return Value #2").grid(row=0, column=4)
-        tk.Label(self, text="=============").grid(row=1, column=4)
-        tk.Label(self, text="Return Value #3").grid(row=0, column=6)
-        tk.Label(self, text="=============").grid(row=1, column=6)
-        tk.Label(self, text="Return Value #4").grid(row=0, column=8)
-        tk.Label(self, text="=============").grid(row=1, column=8)
-        
-        #login field
-        self.button = tk.Button(self, text="Log In", command=self.create_login_window)
-        self.button.grid(row=2, column=0, pady=5)
-        tk.Label(self, text="User:").grid(row=2, column=1)
-        self.login_userName = tk.Label(self, text='invalid')
-        self.login_userName.grid(row=2, column=2)
-        tk.Label(self, text="Pass:").grid(row=2, column=3)
-        self.login_password = tk.Label(self, text='invalid')
-        self.login_password.grid(row=2, column=4)
-        
-        #create account field
-        self.button = tk.Button(self, text="Create Account", command=self.create_account_window)
-        self.button.grid(row=3, column=0, pady=5)
-        tk.Label(self, text="First Name:").grid(row=3, column=1)
-        self.account_firstName = tk.Label(self, text='invalid')
-        self.account_firstName.grid(row=3, column=2)
-        tk.Label(self, text="Last Name:").grid(row=3, column=3)
-        self.account_lastName = tk.Label(self, text='invalid')
-        self.account_lastName.grid(row=3, column=4)
-        tk.Label(self, text="ID Number:").grid(row=3, column=5)
-        self.account_employeeID = tk.Label(self, text='invalid')
-        self.account_employeeID.grid(row=3, column=6)
-        tk.Label(self, text="Date of Birth:").grid(row=3, column=7)
-        self.account_DOB = tk.Label(self, text='invalid')
-        self.account_DOB.grid(row=3, column=8)
-        #add in TYPE field
-        
-        #create task field
-        self.button = tk.Button(self, text="Create Task", command=self.create_task_window)
-        self.button.grid(row=4, column=0, pady=5)
-        tk.Label(self, text="Task Name:").grid(row=4, column=1)
-        self.task_name = tk.Label(self, text='invalid')
-        self.task_name.grid(row=4, column=2)
-        tk.Label(self, text="Task Description:").grid(row=4, column=3)
-        self.task_description = tk.Label(self, text='invalid')
-        self.task_description.grid(row=4, column=4)
-        tk.Label(self, text="Task Owner ID:").grid(row=4, column=5)
-        self.task_ownerID = tk.Label(self, text='invalid')
-        self.task_ownerID.grid(row=4, column=6)
-        tk.Label(self, text="Task Due Date:").grid(row=4, column=7)
-        self.task_dueDate = tk.Label(self, text='invalid')
-        self.task_dueDate.grid(row=4, column=8)
+        w = root.winfo_screenwidth()
+        w = int(w/6)
+        h = root.winfo_screenheight()
+        h = int(h/6)
+        root.geometry("900x400" + "+" + str(w) + "+" + str(h))
 
-        #create project field
-        self.button = tk.Button(self, text="Create Project", command=self.create_project_window)
-        self.button.grid(row=5, column=0)
-        
-        tk.Label(self, text="*").grid(row=6, column=0, pady=5)
-        tk.Label(self, text="TaskCommander Window Testing Module *BETA*").grid(row=7, column=0)
+        ############################################
+        ############ "CREATE" FRAME ############
+        ############################################
 
+        #logo~!
+        self.rowconfigure(0)
+        self.columnconfigure(0)
+        self.logo = tk.PhotoImage(file='logo.gif')
+        logoFrame=Frame(self,bg='red',width=400)
+        logoFrame.grid(row=0,column=0,rowspan=1,columnspan=3,sticky=ALL)
+        myLogo = tk.Label(logoFrame, image=self.logo).grid(row=2,column=0,columnspan=2)
+        Label(logoFrame, text="*Insert LOGO Here*").grid(row=3, column=0)
+        
+        #buttons!
+        myframe1=Frame(self,bg='green')
+        myframe1.grid(row=1,column=0,rowspan=2,columnspan=2,sticky=ALL)
+        login_button = Button(myframe1, text="Log In", command=self.create_login_window)
+        login_button.grid(column=0, row=0)
+
+        account_button = Button(myframe1, text="Create Account", command=self.create_account_window)
+        account_button.grid(column=0, row=2)
+
+        project_button = Button(myframe1, text="Create Project", command=self.create_project_window)
+        project_button.grid(column=0, row=4)
+
+        task_button = Button(myframe1, text="Create Task", command=self.create_task_window)
+        task_button.grid(column=0, row=6)
+
+        ############################################
+        ############     TAB FRAME      ############
+        ############################################
+        global numButtons
+        global buttonBounds
+        tabFrame=Frame(self,bg='black', height=600, width=455)
+        self.button1text = tk.StringVar()
+        self.button2text = tk.StringVar()
+        self.button3text = tk.StringVar()
+        self.button4text = tk.StringVar()
+        self.button5text = tk.StringVar()
+        self.button1text.set("Project " + str(buttonBounds[0]))
+        self.button2text.set("Project " + str(buttonBounds[1]))
+        self.button3text.set("Project " + str(buttonBounds[2]))
+        self.button4text.set("Project " + str(buttonBounds[3]))
+        self.button5text.set("Project " + str(buttonBounds[4]))  
+            
+
+        arrowLeft = Button(tabFrame,text="<", command=self.GoLeft).grid(column=0, row=1)
+        arrowRight = Button(tabFrame,text=">", command=self.GoRight).grid(column=7, row=1)
+
+        
+        test = Button(tabFrame,text="Open", command=self.OnButtonClick1, width=200)
+        myButtons = [test] * 50
+
+        myButtons[0] = tk.Button(tabFrame,textvariable=(str(self.button1text)), command=self.OnButtonClick1, width=8).grid(column=1, row=1)
+        myButtons[1] = tk.Button(tabFrame,textvariable=(str(self.button2text)), command=self.OnButtonClick2, width=8).grid(column=2, row=1)
+        myButtons[2] = tk.Button(tabFrame,textvariable=(str(self.button3text)), command=self.OnButtonClick3, width=8).grid(column=3, row=1)
+        myButtons[3] = tk.Button(tabFrame,textvariable=(str(self.button4text)), command=self.OnButtonClick4, width=8).grid(column=4, row=1)
+        myButtons[4] = tk.Button(tabFrame,textvariable=(str(self.button5text)), command=self.OnButtonClick5, width=8).grid(column=5, row=1)
+
+        tabFrame.grid(row=0,column=2,rowspan=1,columnspan=1,sticky=ALL)
+
+        ############################################
+        ############ PROJECT FRAME ############
+        ############################################
+        self.rowconfigure(1)
+        self.columnconfigure(1)
+        myframe2=Frame(self,bg='blue', height = 600, width = 455)
+        myframe2.grid(row=1,column=2,rowspan=1,columnspan=1,sticky=ALL)
+
+        ############################################
+        ############ INFO FRAME ############
+        ############################################
+        self.rowconfigure(0)
+        self.columnconfigure(2)
+        titleFrame=Frame(self,bg='red',width=400)
+        titleFrame.grid(row=0,column=3,rowspan=1,columnspan=3,sticky=ALL)
+        Label(titleFrame, text="*Insert Progress Bar Here*").grid(row=4, column=1)
+        myframe3=Frame(self,bg='grey',width=400)
+        myframe3.grid(row=1,column=3,rowspan=2,columnspan=3,sticky=ALL)
+        Label(myframe3, text="Owner:").grid(row=3, column=1)
+        Label(myframe3, text="Creator:").grid(row=4, column=1)
+        Label(myframe3, text="Date of Creation:").grid(row=5, column=1)
+        Label(myframe3, text="Due Date:").grid(row=6, column=1)
+        Label(myframe3, text="Parent Project:").grid(row=7, column=1)
+        self.info_ownerName = Label(myframe3, text="info_ownerName")
+        self.info_ownerName.grid(row=3, column=2)
+        self.info_creatorName = Label(myframe3, text="info_creatorName")
+        self.info_creatorName.grid(row=4, column=2)
+        self.info_dateOfCreation = Label(myframe3, text="info_dateOfCreation")
+        self.info_dateOfCreation.grid(row=5, column=2)
+        self.info_dueDate = Label(myframe3, text="info_dueDate")
+        self.info_dueDate.grid(row=6, column=2)
+        self.info_parentProject = Label(myframe3, text="info_parentProject")
+        self.info_parentProject.grid(row=7, column=2)
+        self.projText = tk.StringVar()
+        self.projText.set("Project Stuff goes here. \n wordd.")
+        myLabels = Label(titleFrame, textvariable=self.projText).grid(column=1, row=2)
+
+
+    def OnButtonClick1(self):
+        self.projText.set("Currently viewing Project " + str(buttonBounds[0]) + ".")
+
+    def OnButtonClick2(self):
+        self.projText.set("Currently viewing Project " + str(buttonBounds[1]) + ".")
+
+    def OnButtonClick3(self):
+        self.projText.set("Currently viewing Project " + str(buttonBounds[2]) + ".")
+        
+    def OnButtonClick4(self):
+        self.projText.set("Currently viewing Project " + str(buttonBounds[3]) + ".")
+        
+    def OnButtonClick5(self):
+        self.projText.set("Currently viewing Project " + str(buttonBounds[4]) + ".")
+
+    def GoRight(self):
+        global buttonBounds
+        global numButtons
+        for x in range (0, numButtons):
+            buttonBounds[x] = buttonBounds[x] + 1
+        self.button1text.set("Project " + str(buttonBounds[0]))
+        self.button2text.set("Project " + str(buttonBounds[1]))
+        self.button3text.set("Project " + str(buttonBounds[2]))
+        self.button4text.set("Project " + str(buttonBounds[3]))
+        self.button5text.set("Project " + str(buttonBounds[4]))  
+
+    def GoLeft(self):
+        global buttonBounds
+        global numButtons
+        for x in range (0, numButtons):
+            buttonBounds[x] = buttonBounds[x] - 1
+        self.button1text.set("Project " + str(buttonBounds[0]))
+        self.button2text.set("Project " + str(buttonBounds[1]))
+        self.button3text.set("Project " + str(buttonBounds[2]))
+        self.button4text.set("Project " + str(buttonBounds[3]))
+        self.button5text.set("Project " + str(buttonBounds[4])) 
+        
     def create_account_window(self):
         self.counter += 1
-        accWin = tk.Toplevel(self)
+        self.fName = StringVar()
+        self.lName = StringVar()
+        self.idNum = StringVar()
+        self.dob = StringVar()
+        accWin = Toplevel(self)
+        accWin.geometry('635x160+360+260')
+        #t.wm_title("Window #%s" % self.counter)
         accWin.wm_title("Create Account")
-        tk.Label(accWin, text="First Name:").grid(row=0, column=0, padx=6, pady=6, sticky=W)
-        tk.Label(accWin, text="Last Name:").grid(row=0, column=2, padx=6, pady=6, sticky=W)
-        tk.Label(accWin, text="Employee ID:").grid(row=1, column=0, padx=6, pady=6, sticky=W)
-        tk.Label(accWin, text="D.O.B. (MM/DD/YYYY)").grid(row=1, column=2, padx=6, pady=6, sticky=W)
-        
-        accWin.e1 = Entry(accWin)
-        accWin.e2 = Entry(accWin)
-        accWin.e3 = Entry(accWin)
-        accWin.e4 = Entry(accWin)
-        
-        accWin.e1.grid(row=0, column=1, padx=6, pady=6, sticky=W)
-        accWin.e2.grid(row=0, column=3, padx=6, pady=6, sticky=W)
-        accWin.e3.grid(row=1, column=1, padx=6, pady=6, sticky=W)
-        accWin.e4.grid(row=1, column=3, padx=6, pady=6, sticky=W)
+        Label(accWin, text="First Name:").grid(row=0, column=0, padx=6, pady=6, sticky=W)
+        Label(accWin, text="Last Name:").grid(row=0, column=2, padx=6, pady=6, sticky=W)
+        Label(accWin, text="Employee ID:").grid(row=1, column=0, padx=6, pady=6, sticky=W)
+        Label(accWin, text="D.O.B. (MM/DD/YYYY)").grid(row=1, column=2, padx=6, pady=6, sticky=W)
 
-    def create_project_window(self):
-        self.counter += 1
-        projWin = tk.Toplevel(self)
-        projWin.wm_title("Create Project")
-        tk.Label(projWin, text="Project Name:").grid(row=0, column=0, padx=6, pady=6, sticky=W)
-        tk.Label(projWin, text="Description:").grid(row=1, column=0, padx=6, pady=6, sticky=W)
-        tk.Label(projWin, text="Owner ID:").grid(row=2, column=0, padx=6, pady=6, sticky=W)
-        tk.Label(projWin, text="Associated Tasks:").grid(row=3, column=0, padx=6, pady=6, sticky=W)
-        tk.Label(projWin, text="Task Name:").grid(row=4, column=0, padx=6, pady=6, sticky=W)
-        tk.Label(projWin, text="Task Due Date:").grid(row=4, column=2, padx=6, pady=6, sticky=W)
-        tk.Label(projWin, text="Add Project Viewers:").grid(row=6, column=0, padx=6, pady=6, sticky=W)
-        tk.Label(projWin, text="Viewer ID:").grid(row=7, column=0, padx=6, pady=6, sticky=W)
-        
-        projWin.e1 = Entry(projWin)
-        projWin.e2 = Entry(projWin)
-        projWin.e3 = Entry(projWin)
-        projWin.e4 = Entry(projWin)
-        projWin.e5 = Entry(projWin)
-        projWin.e6 = Entry(projWin)
+        accWin.e1 = Entry(accWin, textvariable=self.fName)
+        accWin.e2 = Entry(accWin, textvariable=self.lName)
+        accWin.e3 = Entry(accWin, textvariable=self.idNum)
+        accWin.e4 = Entry(accWin, textvariable=self.dob)
 
-        projWin.e1.grid(row=0, column=1, padx=6, pady=6, sticky=W)
-        projWin.e2.grid(row=1, column=1, padx=6, pady=6, sticky=W)
-        projWin.e3.grid(row=2, column=1, padx=6, pady=6, sticky=W)
-        projWin.e4.grid(row=4, column=1, padx=6, pady=6, sticky=W)
-        projWin.e5.grid(row=4, column=3, padx=6, pady=6, sticky=W)
-        projWin.taskButton = tk.Button(logWin, text="Add Task", command=commit_task)
-        projWin.taskButton.grid(row=5, column=1, padx=6, pady=6, sticky=W)
-        projWin.e6.grid(row=7, column=1, padx=6, pady=6, sticky=W)
+        accWin.e1.grid(row=0, column=1, padx=3, pady=3, sticky=W)
+        accWin.e2.grid(row=0, column=3, padx=3, pady=3, sticky=W)
+        accWin.e3.grid(row=1, column=1, padx=3, pady=3, sticky=W)
+        accWin.e4.grid(row=1, column=3, padx=3, pady=3, sticky=W)
 
-        def commit_task():
-            print("task commit")
-            #add task to dictionary
+        #select priviledge level
+        Label(accWin, text="Select account type:").grid(row=3, column=0, padx=6, pady=6)
 
-        def commit_viewer():
-            print("viewer commit")
-            #add viewer to dictionary
+        def set_admin(self):
+            self.checkAdmin = True
 
-        projWin.viewerButton = tk.Button(logWin, text="Add Viewer", command=commit_viewer)
-        projWin.viewerButton.grid(row=7, column=2, padx=6, pady=6, sticky=W)
+        var = IntVar()
+        accWin.r1 = Radiobutton(accWin, text="Global Admin", variable=var, command=set_admin(self))
+        accWin.r2 = Radiobutton(accWin, text="User", variable=var, value=2, command=None)
+        accWin.r1.grid(row=4, column=0)
+        accWin.r2.grid(row=4, column=1)
 
-        projWin.acceptButton = tk.Button(logWin, text="Accept", command=commit_project)
-        projWin.cancelButton = tk.Button(logWin, text="Cancel", command=projWin.destroy)
-        projWin.acceptButton.grid(row=8, column=0, padx=6, pady=6, sticky=W)
-        projWin.cancelButton.grid(row=8, column=1, padx=6, pady=6, sticky=W)
 
-    
+        def commit_account():
+            print("commit account")
+            accWin.destroy()
+
+        accWin.acceptButton = Button(accWin, text="Accept", command=commit_account)
+        accWin.cancelButton = Button(accWin, text="Cancel", command=accWin.destroy)
+        accWin.acceptButton.grid(row=6, column=1, padx=6, pady=6, sticky=W)
+        accWin.cancelButton.grid(row=6, column=1, padx=6, pady=6, sticky=E)
+
+    ######### Lauren, do you want this changed? ############
     def create_login_window(self):
+        #root.iconify()
         self.counter += 1
+        retUserName = StringVar()
+        retPassword = StringVar()
         logWin = tk.Toplevel(self)
+        logWin.geometry('335x120+400+260')
         logWin.wm_title("Log In")
         tk.Label(logWin, text="Employee ID:").grid(row=0, column=0, padx=6, pady=6, sticky=W)
         tk.Label(logWin, text="Password:").grid(row=1, column=0, padx=6, pady=6, sticky=W)
         
-        logWin.e1 = Entry(logWin)
-        logWin.e2 = Entry(logWin, show="*", width=20)
+        logWin.e1 = tk.Entry(logWin, textvariable=retUserName)
+        logWin.e2 = tk.Entry(logWin, show="*", width=20, textvariable=retPassword)
         
         logWin.e1.grid(row=0, column=1, padx=6, pady=6, sticky=W)
         logWin.e2.grid(row=1, column=1, padx=6, pady=6, sticky=W)
-        
+
         def commit_login():
-            self.login_userName['text'] = logWin.e1.get()
-            self.login_password['text'] = logWin.e2.get()
+            #root.deiconify()
+            #self.info_ownerName['text'] = logWin.e1.get()
+            self.login_userName = logWin.e1.get()
+            self.login_password = logWin.e2.get()
+            print("login commit")
+            #root.update() focus_set
             logWin.destroy()
-        
+    
         logWin.newAccountButton = tk.Button(logWin, text="New Account", command=self.create_account_window)
         logWin.acceptButton = tk.Button(logWin, text="Accept", command=commit_login)
         logWin.cancelButton = tk.Button(logWin, text="Cancel", command=logWin.destroy)
         logWin.newAccountButton.grid(row=2, column=0, padx=6, pady=6, sticky=W)
         logWin.acceptButton.grid(row=2, column=1, padx=6, pady=6, sticky=W)
         logWin.cancelButton.grid(row=2, column=1, padx=6, pady=6, sticky=E)
-        
-    def create_account_window(self):
-        self.counter += 1
-        accWin = tk.Toplevel(self)
-        accWin.wm_title("Create Account")
-        tk.Label(accWin, text="First Name:").grid(row=0, column=0, padx=6, pady=6, sticky=W)
-        tk.Label(accWin, text="Last Name:").grid(row=0, column=2, padx=6, pady=6, sticky=W)
-        tk.Label(accWin, text="Employee ID:").grid(row=1, column=0, padx=6, pady=6, sticky=W)
-        tk.Label(accWin, text="D.O.B. (MM/DD/YYYY)").grid(row=1, column=2, padx=6, pady=6, sticky=W)
-        
-        accWin.e1 = Entry(accWin)
-        accWin.e2 = Entry(accWin)
-        accWin.e3 = Entry(accWin)
-        accWin.e4 = Entry(accWin)
-        
-        accWin.e1.grid(row=0, column=1, padx=6, pady=6, sticky=W)
-        accWin.e2.grid(row=0, column=3, padx=6, pady=6, sticky=W)
-        accWin.e3.grid(row=1, column=1, padx=6, pady=6, sticky=W)
-        accWin.e4.grid(row=1, column=3, padx=6, pady=6, sticky=W)
 
-        #select access level
-        def set_admin():
-            is_admin = True
-
-        tk.Label(accWin, text="Select account type:").grid(row=3, column=0, padx=6, pady=6)
-        var = IntVar()
-        accWin.r1 = tk.Radiobutton(accWin, text="Project Manager", variable=var, value=1, command=None)
-        accWin.r2 = tk.Radiobutton(accWin, text="Task Receiver", variable=var, value=2, command=set_admin)
-        accWin.r1.grid(row=4, column=0)
-        accWin.r2.grid(row=4, column=1)
-        
-        
-        def commit_account():
-            self.account_firstName['text'] = accWin.e1.get()
-            self.account_lastName['text'] = accWin.e2.get()
-            self.account_employeeID['text'] = accWin.e3.get()
-            self.account_DOB['text'] = accWin.e4.get()
-            #account type?
-            accWin.destroy()
-            
-        accWin.acceptButton = tk.Button(accWin, text="Accept", command=commit_account)
-        accWin.cancelButton = tk.Button(accWin, text="Cancel", command=accWin.destroy)
-        accWin.acceptButton.grid(row=6, column=1, padx=6, pady=6, sticky=W)
-        accWin.cancelButton.grid(row=6, column=1, padx=6, pady=6, sticky=E)
-        
+    #create task window
     def create_task_window(self):
         self.counter += 1
         tskWin = tk.Toplevel(self)
+        tskWin.geometry('500x185+400+260')
         tskWin.wm_title("Create Task")
+        date_var2 = StringVar(tskWin)
+        date_var2.set(self.strdate)
+        
         tk.Label(tskWin, text="Task Name:").grid(row=0, column=0, padx=6, pady=6, sticky=W)
         tk.Label(tskWin, text="Task Description:").grid(row=1, column=0, padx=6, pady=6, sticky=W)
         tk.Label(tskWin, text="Task Owner ID:").grid(row=2, column=0, padx=6, pady=6, sticky=W)
-        tk.Label(tskWin, text="Task Due Date (MM/DD/YYYY):").grid(row=2, column=2, padx=6, pady=6, sticky=W)
+        tk.Label(tskWin, text="Task Due Date (MM/DD/YYYY):").grid(row=3, column=0, padx=6, pady=6, sticky=W)
         
         tskWin.e1 = Entry(tskWin)
         tskWin.e2 = Entry(tskWin)
         tskWin.e3 = Entry(tskWin)
-        tskWin.e4 = Entry(tskWin)
+        tskWin.e4 = Entry(tskWin, textvariable=date_var2, bg="white", fg="blue", justify="center")
         
         tskWin.e1.grid(row=0, column=1, padx=6, pady=6, sticky=W)
         tskWin.e2.grid(row=1, column=1, padx=6, pady=6, sticky=W)
         tskWin.e3.grid(row=2, column=1, padx=6, pady=6, sticky=W)
-        tskWin.e4.grid(row=2, column=3, padx=6, pady=6, sticky=W)
+        tskWin.e4.grid(row=3, column=1, padx=6, pady=6, sticky=W)
+        
+        tskWin.btn = tk.Button(tskWin, text='Select Date', bg='#7fff00', relief=RAISED, command=lambda: self.fnCalendar(date_var2))
+        tskWin.btn.grid(row=3, column=2, padx=6, pady=6, sticky=W)
         
         def commit_task():
-            self.task_name['text'] = tskWin.e1.get()
-            self.task_description['text'] = tskWin.e2.get()
-            self.task_ownerID['text'] = tskWin.e3.get()
-            self.task_dueDate['text'] = tskWin.e4.get()
+            self.task_name = tskWin.e1.get()
+            self.task_description = tskWin.e2.get()
+            self.task_ownerID = tskWin.e3.get()
+            self.task_dueDate = tskWin.e4.get()
+            print("task commit task")
             tskWin.destroy()
             
         tskWin.acceptButton = tk.Button(tskWin, text="Accept", command=commit_task)
         tskWin.cancelButton = tk.Button(tskWin, text="Cancel", command=tskWin.destroy)
-        tskWin.acceptButton.grid(row=3, column=1, padx=6, pady=6, sticky=W)
-        tskWin.cancelButton.grid(row=3, column=1, padx=6, pady=6, sticky=E)
-    
+        tskWin.acceptButton.grid(row=4, column=1, padx=6, pady=6, sticky=W)
+        tskWin.cancelButton.grid(row=4, column=2, padx=6, pady=6, sticky=E)
         
+    class tkCalendar:
+      def __init__ (self, master, arg_year, arg_month, arg_day, arg_parent_updatable_var):
+        self.update_var = arg_parent_updatable_var
+        top = self.top = tk.Toplevel(master)
+        top.title("Calendar")
+        
+        try:
+            self.intmonth = int(arg_month)
+        except:
+            self.intmonth = int(1)
+        
+        self.canvas = tk.Canvas(top, width=200, height=155, relief=tk.RIDGE, background="white", borderwidth=1)
+        stryear = str(arg_year)
+
+        # year selected
+        self.year_var = tk.StringVar()
+        self.year_var.set(stryear)
+        self.lblYear = tk.Label(top, textvariable = self.year_var, background="white")
+        self.lblYear.place(x=85, y = 3)
+
+        # month selected
+        self.month_var = tk.StringVar()
+        strnummonth = str(self.intmonth)
+        strmonth = Application.dictmonths[strnummonth]
+        self.month_var.set(strmonth)
+ 
+        self.lblYear = tk.Label(top, textvariable = self.month_var, background="white")
+        self.lblYear.place(x=85, y = 23)
+
+        tagBaseButton = "Arrow"
+        self.tagBaseNumber = "DayButton"
+        
+        #draw year arrows
+        x,y = 40, 13 #43
+        tagThisButton = "leftyear"
+        tagFinalThisButton = tuple((tagBaseButton,tagThisButton))
+        self.fnCreateLeftArrow(self.canvas, x,y, tagFinalThisButton)
+        x,y = 150, 13 #43
+        tagThisButton = "rightyear"
+        tagFinalThisButton = tuple((tagBaseButton,tagThisButton))
+        self.fnCreateRightArrow(self.canvas, x,y, tagFinalThisButton)
+        
+        #draw month arrows
+        x,y = 40, 33 #63
+        tagThisButton = "leftmonth"
+        tagFinalThisButton = tuple((tagBaseButton,tagThisButton))
+        self.fnCreateLeftArrow(self.canvas, x,y, tagFinalThisButton)
+        x,y = 150, 33 #63
+        tagThisButton = "rightmonth"
+        tagFinalThisButton = tuple((tagBaseButton,tagThisButton))
+        self.fnCreateRightArrow(self.canvas, x,y, tagFinalThisButton)
+        
+        #Print days
+        self.canvas.create_text(100,55, text=Application.strdays) #100,90
+        self.canvas.pack (expand=1, fill=tk.BOTH)
+        self.canvas.tag_bind("Arrow", "<ButtonRelease-1>", self.fnClick)
+        self.canvas.tag_bind("Arrow", "<Enter>", self.fnOnMouseOver)
+        self.canvas.tag_bind("Arrow", "<Leave>", self.fnOnMouseOut)
+        self.fnFillCalendar()
+ 
+      def fnCreateRightArrow(self, canv, x, y, strtagname):
+        canv.create_polygon(x,y, [[x+0,y-5], [x+10, y-5] , [x+10,y-10] , [x+20,y+0], [x+10,y+10] , [x+10,y+5] , [x+0,y+5]],tags = strtagname , fill="blue", width=0)
+ 
+      def fnCreateLeftArrow(self, canv, x, y, strtagname):
+        canv.create_polygon(x,y, [[x+10,y-10], [x+10, y-5] , [x+20,y-5] , [x+20,y+5], [x+10,y+5] , [x+10,y+10] ],tags = strtagname , fill="blue", width=0)
+ 
+      def fnClick(self,event):
+        owntags = self.canvas.gettags(tk.CURRENT)
+        if "rightyear" in owntags:
+            intyear = int(self.year_var.get())
+            intyear +=1
+            stryear = str(intyear)
+            self.year_var.set(stryear)
+        if "leftyear" in owntags:
+            intyear = int(self.year_var.get())
+            intyear -=1
+            stryear = str(intyear)
+            self.year_var.set(stryear)
+        if "rightmonth" in owntags:
+            if self.intmonth < 12 :
+                self.intmonth += 1
+                strnummonth = str(self.intmonth)
+                strmonth = Application.dictmonths[strnummonth]
+                self.month_var.set(strmonth)
+            else:
+                self.intmonth = 1
+                strnummonth = str(self.intmonth)
+                strmonth = Application.dictmonths[strnummonth]
+                self.month_var.set(strmonth)
+                intyear = int(self.year_var.get())
+                intyear +=1
+                stryear = str(intyear)
+                self.year_var.set(stryear)
+        if "leftmonth" in owntags:
+            if self.intmonth > 1:
+                self.intmonth -= 1
+                strnummonth = str(self.intmonth)
+                strmonth = Application.dictmonths[strnummonth]
+                self.month_var.set(strmonth)
+            else:
+                self.intmonth = 12
+                strnummonth = str(self.intmonth)
+                strmonth = MainWindow.dictmonths[strnummonth]
+                self.month_var.set(strmonth)
+                intyear = int(self.year_var.get())
+                intyear -=1
+                stryear = str(intyear)
+                self.year_var.set(stryear)
+        self.fnFillCalendar()
+ 
+      def fnFillCalendar(self):
+        init_x_pos = 20
+        arr_y_pos = [70,90,110,130,150,170] #110,130,150,170,190,210
+        intposarr = 0
+        self.canvas.delete("DayButton")
+        self.canvas.update()
+        intyear = int(self.year_var.get())
+        monthcal = calendar.monthcalendar(intyear, self.intmonth)
+        for row in monthcal:
+            xpos = init_x_pos
+            ypos = arr_y_pos[intposarr]
+            for item in row:
+                stritem = str(item)
+                if stritem == "0":
+                    xpos += 27
+                else:
+                    tagNumber = tuple((self.tagBaseNumber,stritem))
+                    self.canvas.create_text(xpos, ypos , text=stritem,tags=tagNumber)
+                    xpos += 27
+            intposarr += 1
+        self.canvas.tag_bind("DayButton", "<ButtonRelease-1>", self.fnClickNumber)
+        self.canvas.tag_bind("DayButton", "<Enter>", self.fnOnMouseOver)
+        self.canvas.tag_bind("DayButton", "<Leave>", self.fnOnMouseOut)
+ 
+      def fnClickNumber(self,event):
+        owntags = self.canvas.gettags(tk.CURRENT)
+        for x in owntags:
+            if x not in ("current", "DayButton"):
+                strdate = (str(self.year_var.get()) + "/" + str(self.month_var.get()) + "/" + str(x))
+                self.update_var.set(strdate)
+                self.top.withdraw()
+ 
+      def fnOnMouseOver(self,event):
+        self.canvas.move(tk.CURRENT, 1, 1)
+        self.canvas.update()
+ 
+      def fnOnMouseOut(self,event):
+        self.canvas.move(tk.CURRENT, -1, -1)
+        self.canvas.update()
+
+    def fnCalendar(self, date_var):
+        parent = ()
+        self.tkCalendar(parent, self.year, self.month, self.day, date_var)
+
+    def create_project_window(self):
+        self.counter += 1
+        projWin = tk.Toplevel(self)
+        projWin.geometry('425x340+400+260')
+        projWin.wm_title("Create Project")
+        date_var1 = StringVar(projWin)
+        date_var1.set(self.strdate)
+        
+        tk.Label(projWin, text="Project Name:").grid(row=0, column=0, padx=6, pady=6, sticky=W)
+        tk.Label(projWin, text="Description:").grid(row=1, column=0, padx=6, pady=6, sticky=W)
+        tk.Label(projWin, text="Owner ID:").grid(row=2, column=0, padx=6, pady=6, sticky=W)
+        tk.Label(projWin, text="Associated Tasks:").grid(row=3, column=0, padx=6, pady=6, sticky=W)
+        tk.Label(projWin, text="Task Name:").grid(row=4, column=0, padx=6, pady=6, sticky=W)
+        tk.Label(projWin, text="Task Due Date:").grid(row=5, column=0, padx=6, pady=6, sticky=W)
+        tk.Label(projWin, text="Add Project Viewers:").grid(row=7, column=0, padx=6, pady=6, sticky=W)
+        tk.Label(projWin, text="Viewer ID:").grid(row=8, column=0, padx=6, pady=6, sticky=W)
+        
+        projWin.e1 = Entry(projWin)
+        projWin.e2 = Entry(projWin)
+        projWin.e3 = Entry(projWin)
+        projWin.e4 = Entry(projWin)
+        projWin.e5 = Entry(projWin, textvariable=date_var1, bg="white", fg="blue", justify="center")
+        projWin.e6 = Entry(projWin)
+
+        projWin.e1.grid(row=0, column=1, padx=6, pady=6, sticky=W)
+        projWin.e2.grid(row=1, column=1, padx=6, pady=6, sticky=W)
+        projWin.e3.grid(row=2, column=1, padx=6, pady=6, sticky=W)
+        projWin.e4.grid(row=4, column=1, padx=6, pady=6, sticky=W)
+        projWin.e5.grid(row=5, column=1, padx=6, pady=6, sticky=W)
+        
+        projWin.calButton = tk.Button(projWin, text='Select Date', bg='#7fff00', relief=RAISED, command=lambda: self.fnCalendar(date_var1))
+        projWin.calButton.grid(row=6, column=1, padx=6, pady=6, sticky=W)
+        projWin.e6.grid(row=7, column=1, padx=6, pady=6, sticky=W)
+
+        def commit_task():
+            print("projWin task commit")
+            #add task to project
+            self.create_task_window()
+
+        def commit_viewer():
+            print("commit viewer")
+            #add viewer to list
+
+        def commit_project():
+            print("commit project")
+            projWin.destroy()
+            #add project to dictionary
+
+            
+        projWin.taskButton = tk.Button(projWin, text="Add Task", command=commit_task)
+        projWin.taskButton.grid(row=5, column=2, padx=6, pady=6, sticky=W)
+        projWin.viewerButton = tk.Button(projWin, text="Add Viewer", command=commit_viewer)
+        projWin.viewerButton.grid(row=7, column=2, padx=6, pady=6, sticky=W)
+
+        projWin.acceptButton = tk.Button(projWin, text="Accept", command=commit_project)
+        projWin.cancelButton = tk.Button(projWin, text="Cancel", command=projWin.destroy)
+        projWin.acceptButton.grid(row=8, column=0, padx=6, pady=6, sticky=W)
+        projWin.cancelButton.grid(row=8, column=1, padx=6, pady=6, sticky=W)
+
+
+
+
+
 if __name__ == "__main__":
     root = tk.Tk()
-    main = MainWindow(root)
-    main.pack(side="left", fill="both", expand=True)
-    root.mainloop()
+    #set main window size and placement according to screen size
+    #rootsize tuple(int(_) for _ in root.geometry().split('+')[0].split('x'))
+    #root.geometry('900x400+40+80' % (rootsize + (()))
+    app = Application(root)
+    #app.title('Task Commander Test GUI')
+    app.mainloop()
+
+#Scroll bars
+#http://www.gossamer-threads.com/lists/python/python/13135
+#http://grokbase.com/t/python/python-list/99a67px8z7/tkinter-scrollable-buttons
+#http://effbot.org/tkinterbook/scrollbar.htm

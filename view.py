@@ -94,10 +94,11 @@ class Application(Frame):
         self.rowconfigure(0)
         self.columnconfigure(0)
         self.logo = tk.PhotoImage(file='logo.gif')
+        self.logo2 = tk.PhotoImage(file='logo2.gif')
         logoFrame=Frame(self,bg='grey',width=400)
         logoFrame.grid(row=0,column=0,rowspan=1,columnspan=3,sticky=ALL)
         myLogo = tk.Label(logoFrame, image=self.logo).grid(row=2,column=0,columnspan=2)
-        Label(logoFrame, text="*Insert LOGO Here*").grid(row=3, column=0)
+        #Label(logoFrame, text="*Insert LOGO Here*").grid(row=3, column=0)
         
         #buttons!
         myframe1=Frame(self,bg='white')
@@ -129,7 +130,9 @@ class Application(Frame):
         self.button2text.set("Project " + str(buttonBounds[1]))
         self.button3text.set("Project " + str(buttonBounds[2]))
         self.button4text.set("Project " + str(buttonBounds[3]))
-        self.button5text.set("Project " + str(buttonBounds[4]))  
+        self.button5text.set("Project " + str(buttonBounds[4]))
+
+        self.myLogo2 = tk.Label(tabFrame, image=self.logo2).grid(row=0, column=0, columnspan=3)  
             
 
         arrowLeft = Button(tabFrame,text="<", command=self.GoLeft).grid(column=0, row=1)
@@ -254,6 +257,7 @@ class Application(Frame):
         self.idNum = StringVar()
         self.dob = StringVar()
         accWin = Toplevel(self)
+        root.withdraw() #hide parent window
         accWin.geometry('635x195+360+260')
         #t.wm_title("Window #%s" % self.counter)
         accWin.wm_title("Create Account")
@@ -272,7 +276,6 @@ class Application(Frame):
 
         date_button = tk.Button(accWin, text='Select Date', bg='#7fff00', relief=RAISED, command=lambda: self.fnCalendar(date_var2))
         date_button.grid(row=4, column=3)
-
 
         accWin.e1.grid(row=0, column=1, padx=3, pady=3, sticky=W)
         accWin.e1.focus_set()
@@ -296,6 +299,10 @@ class Application(Frame):
 
 
         def commit_account():
+            #bring main window back
+            root.update()
+            root.deiconify()
+
             print("commit account")
             accWin.destroy()
 
@@ -306,13 +313,13 @@ class Application(Frame):
 
     ######### Lauren, do you want this changed? ############
     def create_login_window(self):
-        #root.iconify()
         self.counter += 1
         retUserName = StringVar()
         retPassword = StringVar()
         logWin = tk.Toplevel(self)
         logWin.geometry('335x120+400+260')
         logWin.wm_title("Log In")
+        root.withdraw() #hide parent window
         tk.Label(logWin, text="Employee ID:").grid(row=0, column=0, padx=6, pady=6, sticky=W)
         tk.Label(logWin, text="Password:").grid(row=1, column=0, padx=6, pady=6, sticky=W)
         
@@ -324,7 +331,10 @@ class Application(Frame):
         logWin.e2.grid(row=1, column=1, padx=6, pady=6, sticky=W)
 
         def commit_login():
-            #root.deiconify()
+            #bring main window back
+            root.update()
+            root.deiconify()
+
             #self.info_ownerName['text'] = logWin.e1.get()
             self.login_userName = logWin.e1.get()
             self.login_password = logWin.e2.get()
@@ -345,6 +355,7 @@ class Application(Frame):
         tskWin = tk.Toplevel(self)
         tskWin.geometry('500x185+400+260')
         tskWin.wm_title("Create Task")
+        root.withdraw() #hide parent window
         date_var2 = StringVar(tskWin)
         date_var2.set(self.strdate)
         
@@ -368,6 +379,10 @@ class Application(Frame):
         tskWin.btn.grid(row=3, column=2, padx=6, pady=6, sticky=W)
         
         def commit_task():
+            #bring main window back
+            root.update()
+            root.deiconify()
+
             self.task_name = tskWin.e1.get()
             self.task_description = tskWin.e2.get()
             self.task_ownerID = tskWin.e3.get()
@@ -539,6 +554,7 @@ class Application(Frame):
         projWin = tk.Toplevel(self)
         projWin.geometry('425x340+400+260')
         projWin.wm_title("Create Project")
+        root.withdraw() #hide parent window
         date_var1 = StringVar(projWin)
         date_var1.set(self.strdate)
         
@@ -579,6 +595,10 @@ class Application(Frame):
             #add viewer to list
 
         def commit_project():
+            #bring main window back
+            root.update()
+            root.deiconify()
+
             print("commit project")
             projWin.destroy()
             #add project to dictionary
@@ -604,7 +624,7 @@ if __name__ == "__main__":
     #rootsize tuple(int(_) for _ in root.geometry().split('+')[0].split('x'))
     #root.geometry('900x400+40+80' % (rootsize + (()))
     app = Application(root)
-    #app.title('Task Commander Test GUI')
+    root.wm_title('Welcome to Task Commander BETA!')
     app.mainloop()
 
 #Scroll bars

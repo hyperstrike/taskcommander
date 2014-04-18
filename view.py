@@ -73,7 +73,6 @@ class Application(Frame):
 
     def getTaskDueDate(self):
      return task_dueDate
-        
 
 
     def __init__(self,master=None):
@@ -95,13 +94,13 @@ class Application(Frame):
         self.rowconfigure(0)
         self.columnconfigure(0)
         self.logo = tk.PhotoImage(file='logo.gif')
-        logoFrame=Frame(self,bg='red',width=400)
+        logoFrame=Frame(self,bg='grey',width=400)
         logoFrame.grid(row=0,column=0,rowspan=1,columnspan=3,sticky=ALL)
         myLogo = tk.Label(logoFrame, image=self.logo).grid(row=2,column=0,columnspan=2)
         Label(logoFrame, text="*Insert LOGO Here*").grid(row=3, column=0)
         
         #buttons!
-        myframe1=Frame(self,bg='green')
+        myframe1=Frame(self,bg='white')
         myframe1.grid(row=1,column=0,rowspan=2,columnspan=2,sticky=ALL)
         login_button = Button(myframe1, text="Log In", command=self.create_login_window)
         login_button.grid(column=0, row=0)
@@ -120,7 +119,7 @@ class Application(Frame):
         ############################################
         global numButtons
         global buttonBounds
-        tabFrame=Frame(self,bg='black', height=600, width=455)
+        tabFrame=Frame(self,bg='white', height=600, width=455)
         self.button1text = tk.StringVar()
         self.button2text = tk.StringVar()
         self.button3text = tk.StringVar()
@@ -153,7 +152,7 @@ class Application(Frame):
         ############################################
         self.rowconfigure(1)
         self.columnconfigure(1)
-        myframe2=Frame(self,bg='blue', height = 600, width = 455)
+        myframe2=Frame(self,bg='grey', height = 600, width = 455)
         myframe2.grid(row=1,column=2,rowspan=1,columnspan=1,sticky=ALL)
 
         ############################################
@@ -161,10 +160,35 @@ class Application(Frame):
         ############################################
         self.rowconfigure(0)
         self.columnconfigure(2)
-        titleFrame=Frame(self,bg='red',width=400)
+        #title frame
+        titleFrame=Frame(self,bg='grey',width=400)
         titleFrame.grid(row=0,column=3,rowspan=1,columnspan=3,sticky=ALL)
+        #progress bar!
+        self.progress_bar = ttk.Progressbar(titleFrame, maximum=100)
+        self.progress_bar.grid(row=5, column=1)
+        self.progress_bar.step(25)
+        self.update()
+
+        ###### Complete Progress Bar example ######
+        '''
+           def __init__(self, master):
+              tk.Frame.__init__(self, master)
+              self.progress = ttk.Progressbar(self, maximum=10)
+              self.progress.pack(expand=1, fill=tk.BOTH)
+              self.progress.bind("<Button-1>", self._loop_progress)
+
+           def _loop_progress(self, *args):
+              for i in range(10):
+                 self.progress.step(1)
+                 # Necessary to update the progress bar appearance
+                 self.update()
+                 # Busy-wait
+                 time.sleep(2)
+         '''
+
         Label(titleFrame, text="*Insert Progress Bar Here*").grid(row=4, column=1)
-        myframe3=Frame(self,bg='grey',width=400)
+        #info attributes
+        myframe3=Frame(self,bg='white',width=400)
         myframe3.grid(row=1,column=3,rowspan=2,columnspan=3,sticky=ALL)
         Label(myframe3, text="Owner:").grid(row=3, column=1)
         Label(myframe3, text="Creator:").grid(row=4, column=1)
@@ -230,9 +254,11 @@ class Application(Frame):
         self.idNum = StringVar()
         self.dob = StringVar()
         accWin = Toplevel(self)
-        accWin.geometry('635x160+360+260')
+        accWin.geometry('635x195+360+260')
         #t.wm_title("Window #%s" % self.counter)
         accWin.wm_title("Create Account")
+        date_var2 = StringVar(accWin)
+        date_var2.set(self.strdate)
         Label(accWin, text="First Name:").grid(row=0, column=0, padx=6, pady=6, sticky=W)
         Label(accWin, text="Last Name:").grid(row=0, column=2, padx=6, pady=6, sticky=W)
         Label(accWin, text="Employee ID:").grid(row=1, column=0, padx=6, pady=6, sticky=W)
@@ -241,15 +267,23 @@ class Application(Frame):
         accWin.e1 = Entry(accWin, textvariable=self.fName)
         accWin.e2 = Entry(accWin, textvariable=self.lName)
         accWin.e3 = Entry(accWin, textvariable=self.idNum)
-        accWin.e4 = Entry(accWin, textvariable=self.dob)
+        #accWin.e4 = Entry(accWin, textvariable=self.dob)
+        accWin.e4 = Entry(accWin, textvariable=date_var2, bg="white", fg="blue", justify="center")
+
+        date_button = tk.Button(accWin, text='Select Date', bg='#7fff00', relief=RAISED, command=lambda: self.fnCalendar(date_var2))
+        date_button.grid(row=4, column=3)
+
 
         accWin.e1.grid(row=0, column=1, padx=3, pady=3, sticky=W)
+        accWin.e1.focus_set()
         accWin.e2.grid(row=0, column=3, padx=3, pady=3, sticky=W)
         accWin.e3.grid(row=1, column=1, padx=3, pady=3, sticky=W)
         accWin.e4.grid(row=1, column=3, padx=3, pady=3, sticky=W)
 
+        #date selection row 4
+
         #select priviledge level
-        Label(accWin, text="Select account type:").grid(row=3, column=0, padx=6, pady=6)
+        Label(accWin, text="Select account type:").grid(row=5, column=0, padx=6, pady=6)
 
         def set_admin(self):
             self.checkAdmin = True
@@ -257,8 +291,8 @@ class Application(Frame):
         var = IntVar()
         accWin.r1 = Radiobutton(accWin, text="Global Admin", variable=var, command=set_admin(self))
         accWin.r2 = Radiobutton(accWin, text="User", variable=var, value=2, command=None)
-        accWin.r1.grid(row=4, column=0)
-        accWin.r2.grid(row=4, column=1)
+        accWin.r1.grid(row=6, column=0)
+        accWin.r2.grid(row=6, column=1)
 
 
         def commit_account():
@@ -267,8 +301,8 @@ class Application(Frame):
 
         accWin.acceptButton = Button(accWin, text="Accept", command=commit_account)
         accWin.cancelButton = Button(accWin, text="Cancel", command=accWin.destroy)
-        accWin.acceptButton.grid(row=6, column=1, padx=6, pady=6, sticky=W)
-        accWin.cancelButton.grid(row=6, column=1, padx=6, pady=6, sticky=E)
+        accWin.acceptButton.grid(row=7, column=1, padx=6, pady=6, sticky=W)
+        accWin.cancelButton.grid(row=7, column=1, padx=6, pady=6, sticky=E)
 
     ######### Lauren, do you want this changed? ############
     def create_login_window(self):
@@ -283,6 +317,7 @@ class Application(Frame):
         tk.Label(logWin, text="Password:").grid(row=1, column=0, padx=6, pady=6, sticky=W)
         
         logWin.e1 = tk.Entry(logWin, textvariable=retUserName)
+        logWin.e1.focus_set()
         logWin.e2 = tk.Entry(logWin, show="*", width=20, textvariable=retPassword)
         
         logWin.e1.grid(row=0, column=1, padx=6, pady=6, sticky=W)
@@ -324,6 +359,7 @@ class Application(Frame):
         tskWin.e4 = Entry(tskWin, textvariable=date_var2, bg="white", fg="blue", justify="center")
         
         tskWin.e1.grid(row=0, column=1, padx=6, pady=6, sticky=W)
+        tskWin.e1.focus_set()
         tskWin.e2.grid(row=1, column=1, padx=6, pady=6, sticky=W)
         tskWin.e3.grid(row=2, column=1, padx=6, pady=6, sticky=W)
         tskWin.e4.grid(row=3, column=1, padx=6, pady=6, sticky=W)
@@ -338,7 +374,7 @@ class Application(Frame):
             self.task_dueDate = tskWin.e4.get()
             print("task commit task")
             tskWin.destroy()
-            
+
         tskWin.acceptButton = tk.Button(tskWin, text="Accept", command=commit_task)
         tskWin.cancelButton = tk.Button(tskWin, text="Cancel", command=tskWin.destroy)
         tskWin.acceptButton.grid(row=4, column=1, padx=6, pady=6, sticky=W)
@@ -523,6 +559,7 @@ class Application(Frame):
         projWin.e6 = Entry(projWin)
 
         projWin.e1.grid(row=0, column=1, padx=6, pady=6, sticky=W)
+        projWin.e1.focus_set()
         projWin.e2.grid(row=1, column=1, padx=6, pady=6, sticky=W)
         projWin.e3.grid(row=2, column=1, padx=6, pady=6, sticky=W)
         projWin.e4.grid(row=4, column=1, padx=6, pady=6, sticky=W)

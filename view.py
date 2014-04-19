@@ -9,6 +9,14 @@ ALL=N+S+E+W
 numButtons = 5
 buttonBounds = [5,6,7,8,9]
 
+tasks = {'math': 12, 'english': 31, 'science': 33}
+
+task1 = ["Trigonometry", "Bob", "Bill", "1/26/14", "7/26/14", "Math"]
+task2 = ["Geology", "Joe", "Jack", "2/17/14", "2/18/14", "Science"]
+task3 = ["Assembly Language", "Linda", "Lucy", "10/10/13", "10/10/14", "Computer Science"]
+
+myTasks = [task1, task2, task3]
+
 
 class Application(Frame):
     counter = 0
@@ -73,6 +81,7 @@ class Application(Frame):
 
     def getTaskDueDate(self):
      return task_dueDate
+        
 
 
     def __init__(self,master=None):
@@ -101,7 +110,7 @@ class Application(Frame):
         #Label(logoFrame, text="*Insert LOGO Here*").grid(row=3, column=0)
         
         #buttons!
-        myframe1=Frame(self,bg='white')
+        myframe1=Frame(self,bg='green')
         myframe1.grid(row=1,column=0,rowspan=2,columnspan=2,sticky=ALL)
         login_button = Button(myframe1, text="Log In", command=self.create_login_window)
         login_button.grid(column=0, row=0)
@@ -120,7 +129,7 @@ class Application(Frame):
         ############################################
         global numButtons
         global buttonBounds
-        tabFrame=Frame(self,bg='white', height=600, width=455)
+        tabFrame=Frame(self,bg='black', height=600, width=455)
         self.button1text = tk.StringVar()
         self.button2text = tk.StringVar()
         self.button3text = tk.StringVar()
@@ -130,10 +139,9 @@ class Application(Frame):
         self.button2text.set("Project " + str(buttonBounds[1]))
         self.button3text.set("Project " + str(buttonBounds[2]))
         self.button4text.set("Project " + str(buttonBounds[3]))
-        self.button5text.set("Project " + str(buttonBounds[4]))
+        self.button5text.set("Project " + str(buttonBounds[4]))  
 
         self.myLogo2 = tk.Label(tabFrame, image=self.logo2).grid(row=0, column=0, columnspan=3)  
-            
 
         arrowLeft = Button(tabFrame,text="<", command=self.GoLeft).grid(column=0, row=1)
         arrowRight = Button(tabFrame,text=">", command=self.GoRight).grid(column=7, row=1)
@@ -155,7 +163,22 @@ class Application(Frame):
         ############################################
         self.rowconfigure(1)
         self.columnconfigure(1)
-        myframe2=Frame(self,bg='grey', height = 600, width = 455)
+        myframe2=Frame(self,bg='blue', height = 600, width = 455)
+
+        global tasks
+
+        self.tree = ttk.Treeview(self)
+        #self.tree.column("#0", text='Sample', anchor=tk.W)
+        ysb = tk.Scrollbar(myframe2, orient = VERTICAL)
+        xsb = tk.Scrollbar(myframe2, orient = 'horizontal', command = self.tree.xview)
+        self.tree.configure(yscrollcommand = ysb.set, xscrollcommand = xsb.set)
+        self.tree.heading('#0', text = 'Path', anchor = 'w')
+        self.tree.pack(in_=myframe2, expand=YES, fill=BOTH)
+        abspath = "Project 1"
+        root_node = self.tree.insert('', 'end', text = abspath, open= True)
+        self.tree.bind("<Double-1>", self.OnDoubleClick)
+        self.process_projects(root_node)
+
         myframe2.grid(row=1,column=2,rowspan=1,columnspan=1,sticky=ALL)
 
         ############################################
@@ -163,15 +186,28 @@ class Application(Frame):
         ############################################
         self.rowconfigure(0)
         self.columnconfigure(2)
+        
+        self.ownerNameText = tk.StringVar()
+        self.creatorNameText = tk.StringVar()
+        self.dateOfCreationText = tk.StringVar()
+        self.dueDateText = tk.StringVar()
+        self.parentProjectText = tk.StringVar()
+       
+        self.ownerNameText.set("info_ownerName")
+        self.creatorNameText.set("info_creatorName")
+        self.dateOfCreationText.set("info_dateOfCreation")
+        self.dueDateText.set("info_dueDate")
+        self.parentProjectText.set("info_parentProject")
+        
         #title frame
-        titleFrame=Frame(self,bg='grey',width=400)
+        titleFrame=Frame(self,bg='red',width=400)
         titleFrame.grid(row=0,column=3,rowspan=1,columnspan=3,sticky=ALL)
         #progress bar!
         self.progress_bar = ttk.Progressbar(titleFrame, maximum=100)
         self.progress_bar.grid(row=5, column=1)
         self.progress_bar.step(25)
         self.update()
-
+        #Label(titleFrame, text="*Insert Progress Bar Here*").grid(row=4, column=1)
         ###### Complete Progress Bar example ######
         '''
            def __init__(self, master):
@@ -189,29 +225,43 @@ class Application(Frame):
                  time.sleep(2)
          '''
 
-        Label(titleFrame, text="*Insert Progress Bar Here*").grid(row=4, column=1)
-        #info attributes
-        myframe3=Frame(self,bg='white',width=400)
+        myframe3=Frame(self,bg='grey',width=400)
         myframe3.grid(row=1,column=3,rowspan=2,columnspan=3,sticky=ALL)
+        #info attributes
         Label(myframe3, text="Owner:").grid(row=3, column=1)
         Label(myframe3, text="Creator:").grid(row=4, column=1)
         Label(myframe3, text="Date of Creation:").grid(row=5, column=1)
         Label(myframe3, text="Due Date:").grid(row=6, column=1)
         Label(myframe3, text="Parent Project:").grid(row=7, column=1)
-        self.info_ownerName = Label(myframe3, text="info_ownerName")
+        self.info_ownerName = Label(myframe3, textvariable=self.ownerNameText)
         self.info_ownerName.grid(row=3, column=2)
-        self.info_creatorName = Label(myframe3, text="info_creatorName")
+        self.info_creatorName = Label(myframe3, textvariable=self.creatorNameText)
         self.info_creatorName.grid(row=4, column=2)
-        self.info_dateOfCreation = Label(myframe3, text="info_dateOfCreation")
+        self.info_dateOfCreation = Label(myframe3, textvariable=self.dateOfCreationText)
         self.info_dateOfCreation.grid(row=5, column=2)
-        self.info_dueDate = Label(myframe3, text="info_dueDate")
+        self.info_dueDate = Label(myframe3, textvariable=self.dueDateText)
         self.info_dueDate.grid(row=6, column=2)
-        self.info_parentProject = Label(myframe3, text="info_parentProject")
+        self.info_parentProject = Label(myframe3, textvariable=self.parentProjectText)
         self.info_parentProject.grid(row=7, column=2)
         self.projText = tk.StringVar()
         self.projText.set("Project Stuff goes here. \n wordd.")
         myLabels = Label(titleFrame, textvariable=self.projText).grid(column=1, row=2)
 
+    def OnDoubleClick(self, event):
+        item = self.tree.selection()[0]
+        self.ownerNameText.set(self.tree.item(item, "text"))
+        for i in range (0, len(myTasks)):
+            if self.tree.item(item, "text") == myTasks[i][0]:
+                self.ownerNameText.set(myTasks[i][1])
+                self.creatorNameText.set(myTasks[i][2])
+                self.dateOfCreationText.set(myTasks[i][3])
+                self.dueDateText.set(myTasks[i][4])
+                self.parentProjectText.set(myTasks[i][5])
+
+    def process_projects(self, parent):
+            tasknames = tasks.keys()
+            for i in range (0, len(myTasks)):
+                self.tree.insert(parent, 'end', text =str(list(myTasks)[i][0]), open = False)
 
     def OnButtonClick1(self):
         self.projText.set("Currently viewing Project " + str(buttonBounds[0]) + ".")
@@ -311,8 +361,10 @@ class Application(Frame):
         accWin.acceptButton.grid(row=7, column=1, padx=6, pady=6, sticky=W)
         accWin.cancelButton.grid(row=7, column=1, padx=6, pady=6, sticky=E)
 
+        
     ######### Lauren, do you want this changed? ############
     def create_login_window(self):
+        #root.iconify()
         self.counter += 1
         retUserName = StringVar()
         retPassword = StringVar()
@@ -320,12 +372,14 @@ class Application(Frame):
         logWin.geometry('335x120+400+260')
         logWin.wm_title("Log In")
         root.withdraw() #hide parent window
+        logWin.wm_title("Log In")
         tk.Label(logWin, text="Employee ID:").grid(row=0, column=0, padx=6, pady=6, sticky=W)
         tk.Label(logWin, text="Password:").grid(row=1, column=0, padx=6, pady=6, sticky=W)
         
         logWin.e1 = tk.Entry(logWin, textvariable=retUserName)
         logWin.e1.focus_set()
         logWin.e2 = tk.Entry(logWin, show="*", width=20, textvariable=retPassword)
+        
         
         logWin.e1.grid(row=0, column=1, padx=6, pady=6, sticky=W)
         logWin.e2.grid(row=1, column=1, padx=6, pady=6, sticky=W)
@@ -335,7 +389,6 @@ class Application(Frame):
             root.update()
             root.deiconify()
 
-            #self.info_ownerName['text'] = logWin.e1.get()
             self.login_userName = logWin.e1.get()
             self.login_password = logWin.e2.get()
             print("login commit")
@@ -370,7 +423,6 @@ class Application(Frame):
         tskWin.e4 = Entry(tskWin, textvariable=date_var2, bg="white", fg="blue", justify="center")
         
         tskWin.e1.grid(row=0, column=1, padx=6, pady=6, sticky=W)
-        tskWin.e1.focus_set()
         tskWin.e2.grid(row=1, column=1, padx=6, pady=6, sticky=W)
         tskWin.e3.grid(row=2, column=1, padx=6, pady=6, sticky=W)
         tskWin.e4.grid(row=3, column=1, padx=6, pady=6, sticky=W)
@@ -379,7 +431,7 @@ class Application(Frame):
         tskWin.btn.grid(row=3, column=2, padx=6, pady=6, sticky=W)
         
         def commit_task():
-            #bring main window back
+        	#bring main window back
             root.update()
             root.deiconify()
 
@@ -389,7 +441,7 @@ class Application(Frame):
             self.task_dueDate = tskWin.e4.get()
             print("task commit task")
             tskWin.destroy()
-
+            
         tskWin.acceptButton = tk.Button(tskWin, text="Accept", command=commit_task)
         tskWin.cancelButton = tk.Button(tskWin, text="Cancel", command=tskWin.destroy)
         tskWin.acceptButton.grid(row=4, column=1, padx=6, pady=6, sticky=W)
@@ -575,7 +627,6 @@ class Application(Frame):
         projWin.e6 = Entry(projWin)
 
         projWin.e1.grid(row=0, column=1, padx=6, pady=6, sticky=W)
-        projWin.e1.focus_set()
         projWin.e2.grid(row=1, column=1, padx=6, pady=6, sticky=W)
         projWin.e3.grid(row=2, column=1, padx=6, pady=6, sticky=W)
         projWin.e4.grid(row=4, column=1, padx=6, pady=6, sticky=W)
@@ -595,7 +646,7 @@ class Application(Frame):
             #add viewer to list
 
         def commit_project():
-            #bring main window back
+        	#bring main window back
             root.update()
             root.deiconify()
 

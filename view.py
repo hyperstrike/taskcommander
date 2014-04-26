@@ -4,6 +4,10 @@ import tkinter as tk
 import datetime
 from tkinter import *
 from tkinter import ttk
+import handler
+import model
+User, Project, Task = model.User, model.Project, model.Task
+
 
 testColor = '#%02x%02x%02x' % (78, 80, 77)
 
@@ -132,10 +136,11 @@ class MainWindow(Frame):
     def update_clock(self):
         now = time.strftime("%H:%M:%S")
         self.timerLabel.configure(text=now)
-        root.after(1000, self.update_clock)
+        self.master.after(1000, self.update_clock)
         
+
     #create account window  
-    def create_account_window(self):
+    def create_account_window(self, root):
         self.counter += 1
         self.fName = StringVar()
         self.lName = StringVar()
@@ -156,7 +161,7 @@ class MainWindow(Frame):
         accWin.e1 = Entry(accWin, textvariable=self.fName)
         accWin.e2 = Entry(accWin, textvariable=self.lName)
         accWin.e3 = Entry(accWin, textvariable=self.idNum)
-        #accWin.e4 = Entry(accWin, textvariable=self.dob)
+        accWin.e4 = Entry(accWin, textvariable=self.dob)
         accWin.e4 = Entry(accWin, textvariable=date_var2, bg="white", fg="blue", justify="center")
 
         date_button = tk.Button(accWin, text='Select Date', bg='#7fff00', relief=RAISED, command=lambda: self.fnCalendar(date_var2))
@@ -184,19 +189,23 @@ class MainWindow(Frame):
 
 
         def commit_account():
+            self.currWindow = "account"
             #bring main window back
             root.update()
             #root.deiconify()
+            self.handler.login.createUser(self.fName.get(), self.lName.get(), self.idNum.get(), self.dob.get(), 'admin' if self.checkAdmin else 'user', self.password.get())
 
-            print("commit account")
+            print("accept accWin -> back to logWin")
             accWin.destroy()
 
         def cancel_account():
+            self.master.update()
+            self.currWindow = "account"
             #bring main window back
             root.update()
             #root.deiconify()
 
-            print("cancel account")
+            print("cancel accWin -> back to logWin")
             accWin.destroy()
 
         accWin.acceptButton = Button(accWin, text="Accept", command=commit_account)
@@ -205,7 +214,7 @@ class MainWindow(Frame):
         accWin.cancelButton.grid(row=7, column=1, padx=6, pady=6, sticky=E)
 
     #define login window (must be defined before init!)
-    def create_login_window(self):
+    def create_login_window(self, root):
         #root.iconify()
         self.counter += 1
         retUserName = StringVar()
@@ -230,6 +239,7 @@ class MainWindow(Frame):
         logWin.e3.grid(row=2, column=1, padx=6, pady=6, sticky=W)
 
         def commit_login():
+            self.currWindow = "main"
             #bring main window back
             root.update()
             root.deiconify()
@@ -237,19 +247,27 @@ class MainWindow(Frame):
             self.login_userName = logWin.e1.get()
             self.login_userID = logWin.e2.get()
             self.login_password = logWin.e2.get()
-            print("login commit")
+            print("accept logWin -> back to main")
+            login_successful = self.handler.login.submit(self.login_userID, self.login_password)
+            if (login_successful):
+                print("successful login")
+            if not(login_successful):
+                print("login unsuccessful")
+                pass
+            self.handler.print_stuff()
             #root.update() focus_set
             logWin.destroy()
 
         def cancel_login():
+            self.currWindow = "main"
             #bring main window back
             root.update()
             root.deiconify()
 
-            print("cancel login")
+            print("cancel logWin -> back to main")
             logWin.destroy()
     
-        logWin.newAccountButton = tk.Button(logWin, text="New Account", command=self.create_account_window)
+        logWin.newAccountButton = tk.Button(logWin, text="New Account", command=self.generate_account_window)
         logWin.acceptButton = tk.Button(logWin, text="Accept", command=commit_login)
         logWin.cancelButton = tk.Button(logWin, text="Cancel", command=cancel_login)
         logWin.newAccountButton.grid(row=3, column=0, padx=6, pady=6, sticky=W)
@@ -467,43 +485,43 @@ class MainWindow(Frame):
 
 
     #create task window
-    def create_task_window(self):
+    def create_task_window(self, root):
         self.counter += 1
         tskWin = tk.Toplevel(self)
-        tskWin.geometry('500x185+400+260')
-        tskWin.wm_title("Create Task")
+        tskWin.geometry('500x165+400+260')
+        tskWin.wm_title("Add Tasks to Project")
         root.withdraw() #hide parent window
         date_var2 = StringVar(tskWin)
         date_var2.set(self.strdate)
         
         tk.Label(tskWin, text="Task Name:").grid(row=0, column=0, padx=6, pady=6, sticky=W)
-        tk.Label(tskWin, text="Task Description:").grid(row=1, column=0, padx=6, pady=6, sticky=W)
-        tk.Label(tskWin, text="Task Owner ID:").grid(row=2, column=0, padx=6, pady=6, sticky=W)
-        tk.Label(tskWin, text="Task Due Date (MM/DD/YYYY):").grid(row=3, column=0, padx=6, pady=6, sticky=W)
+        tk.Label(tskWin, text="Task Due Date (MM/DD/YYYY):").grid(row=1, column=0, padx=6, pady=6, sticky=W)
         
         tskWin.e1 = Entry(tskWin)
-        tskWin.e2 = Entry(tskWin)
-        tskWin.e3 = Entry(tskWin)
         tskWin.e4 = Entry(tskWin, textvariable=date_var2, bg="white", fg="blue", justify="center")
         
         tskWin.e1.grid(row=0, column=1, padx=6, pady=6, sticky=W)
-        tskWin.e2.grid(row=1, column=1, padx=6, pady=6, sticky=W)
-        tskWin.e3.grid(row=2, column=1, padx=6, pady=6, sticky=W)
-        tskWin.e4.grid(row=3, column=1, padx=6, pady=6, sticky=W)
+        tskWin.e4.grid(row=1, column=1, padx=6, pady=6, sticky=W)
         
         tskWin.btn = tk.Button(tskWin, text='Select Date', bg='#7fff00', relief=RAISED, command=lambda: self.fnCalendar(date_var2))
-        tskWin.btn.grid(row=3, column=2, padx=6, pady=6, sticky=W)
+        tskWin.btn.grid(row=1, column=2, padx=6, pady=6, sticky=W)
         
+        
+        def add_task():
+            #add task to list
+            print("add task to list")
+
         def commit_task():
             #bring main window back
             root.update()
             root.deiconify()
 
             self.task_name = tskWin.e1.get()
-            self.task_description = tskWin.e2.get()
-            self.task_ownerID = tskWin.e3.get()
+            #self.task_description = tskWin.e2.get()
+            #self.task_ownerID = tskWin.e3.get()
             self.task_dueDate = tskWin.e4.get()
-            print("task commit task")
+            self.generate_add_viewer_window()
+            print("commit tasks -> populate viewers")
             tskWin.destroy()
 
         def cancel_task():
@@ -513,17 +531,61 @@ class MainWindow(Frame):
 
             print("cancel task")
             tskWin.destroy()
-            
+
+        tskWin.addButton = tk.Button(tskWin, text="Add Task", command=add_task)
         tskWin.acceptButton = tk.Button(tskWin, text="Accept", command=commit_task)
         tskWin.cancelButton = tk.Button(tskWin, text="Cancel", command=cancel_task)
+        tskWin.addButton.grid(row=3, column=1, padx=6, pady=6, sticky=W)
         tskWin.acceptButton.grid(row=4, column=1, padx=6, pady=6, sticky=W)
         tskWin.cancelButton.grid(row=4, column=2, padx=6, pady=6, sticky=E)
 
+    #create viewer window
+    def create_viewer_window(self):
+        self.counter += 1
+        viewWin = tk.Toplevel(self)
+        viewWin.geometry('500x185+400+260')
+        viewWin.wm_title("Add Viewer")
+        self.master.withdraw() #hide parent window
+        date_var2 = StringVar(viewWin)
+        date_var2.set(self.strdate)
+        
+        tk.Label(viewWin, text="Project Viewer ID:").grid(row=0, column=0, padx=6, pady=6, sticky=W)
+        
+        viewWin.e1 = Entry(viewWin)
+        
+        viewWin.e1.grid(row=0, column=1, padx=6, pady=6, sticky=W)
+        
+        def commit_viewer():
+            #bring main window back
+            self.master.update()
+            self.master.deiconify()
+
+            self.task_name = tskWin.e1.get()
+            self.task_description = tskWin.e2.get()
+            self.task_ownerID = tskWin.e3.get()
+            self.task_dueDate = tskWin.e4.get()
+            print("task commit task")
+            self.generate_viewer_window()
+            viewWin.destroy()
+
+        def cancel_viewer():
+            #bring main window back
+            self.master.update()
+            self.master.deiconify()
+
+            print("cancel task")
+            viewWin.destroy()
+            
+        viewWin.acceptButton = tk.Button(tskWin, text="Add Viewer", command=commit_task)
+        viewWin.cancelButton = tk.Button(tskWin, text="Cancel", command=cancel_task)
+        viewWin.acceptButton.grid(row=2, column=1, padx=6, pady=6, sticky=W)
+        viewWin.cancelButton.grid(row=2, column=2, padx=6, pady=6, sticky=E)
+
     #project window
-    def create_project_window(self):
+    def create_project_window(self, root):
         self.counter += 1
         projWin = tk.Toplevel(self)
-        projWin.geometry('430x350+400+260')
+        projWin.geometry('430x220+400+260')
         projWin.wm_title("Create Project")
         root.withdraw() #hide parent window
         date_var1 = StringVar(projWin)
@@ -532,56 +594,58 @@ class MainWindow(Frame):
         tk.Label(projWin, text="Project Name:").grid(row=0, column=0, padx=6, pady=6, sticky=W)
         tk.Label(projWin, text="Description:").grid(row=1, column=0, padx=6, pady=6, sticky=W)
         tk.Label(projWin, text="Owner ID:").grid(row=2, column=0, padx=6, pady=6, sticky=W)
-        tk.Label(projWin, text="Associated Tasks:").grid(row=3, column=0, padx=6, pady=6, sticky=W)
-        tk.Label(projWin, text="Task Name:").grid(row=4, column=0, padx=6, pady=6, sticky=W)
-        tk.Label(projWin, text="Task Due Date:").grid(row=5, column=0, padx=6, pady=6, sticky=W)
-        tk.Label(projWin, text= "Project Due Date:").grid(row=7, column=0, padx=6, pady=6, sticky=W)
-        tk.Label(projWin, text="Add Project Viewers:").grid(row=8, column=0, padx=6, pady=6, sticky=W)
-        tk.Label(projWin, text="Viewer ID:").grid(row=9, column=0, padx=6, pady=6, sticky=W)
+        #tk.Label(projWin, text="Associated Tasks:").grid(row=3, column=0, padx=6, pady=6, sticky=W)
+        #tk.Label(projWin, text="Task Name:").grid(row=4, column=0, padx=6, pady=6, sticky=W)
+        #tk.Label(projWin, text="Task Due Date:").grid(row=5, column=0, padx=6, pady=6, sticky=W)
+        tk.Label(projWin, text= "Project Due Date:").grid(row=3, column=0, padx=6, pady=6, sticky=W)
+        #tk.Label(projWin, text="Add Project Viewers:").grid(row=8, column=0, padx=6, pady=6, sticky=W)
+        #tk.Label(projWin, text="Viewer ID:").grid(row=9, column=0, padx=6, pady=6, sticky=W)
         
         projWin.e1 = Entry(projWin)
         projWin.e2 = Entry(projWin)
         projWin.e3 = Entry(projWin)
-        projWin.e4 = Entry(projWin)
+        #projWin.e4 = Entry(projWin)
         projWin.e5 = Entry(projWin, textvariable=date_var1, bg="white", fg="blue", justify="center")
-        projWin.e6 = Entry(projWin) 
+        #projWin.e6 = Entry(projWin) 
         projWin.e7 = Entry(projWin) #proj due date
 
         projWin.e1.grid(row=0, column=1, padx=6, pady=6, sticky=W)
         projWin.e2.grid(row=1, column=1, padx=6, pady=6, sticky=W)
         projWin.e3.grid(row=2, column=1, padx=6, pady=6, sticky=W)
-        projWin.e4.grid(row=4, column=1, padx=6, pady=6, sticky=W)
-        projWin.e5.grid(row=5, column=1, padx=6, pady=6, sticky=W)
-        projWin.e6.grid(row=7, column=1, padx=6, pady=6, sticky=W)
+        #projWin.e4.grid(row=4, column=1, padx=6, pady=6, sticky=W)
+        projWin.e5.grid(row=3, column=1, padx=6, pady=6, sticky=W)
+        #projWin.e6.grid(row=7, column=1, padx=6, pady=6, sticky=W)
         
         projWin.calButton = tk.Button(projWin, text='Select Date', bg='#7fff00', relief=RAISED, command=lambda: self.fnCalendar(date_var1))
-        projWin.calButton.grid(row=6, column=1, padx=6, pady=6, sticky=W)
-        projWin.e7.grid(row=8, column=1, padx=6, pady=6, sticky=W) #proj viewer id
+        projWin.calButton.grid(row=4, column=1, padx=6, pady=6, sticky=W)
+        #projWin.e7.grid(row=8, column=1, padx=6, pady=6, sticky=W) #proj viewer id
 
-        def commit_task():
-            print("projWin task commit")
+        def commit_task(): #no longer used
+            print("projWin task commit -> no change in GUI state")
             #add task to project
             #self.create_task_window()
 
-        def commit_viewer():
-            print("commit viewer")
+        def commit_viewer(): #no longer used
+            print("commit viewer -> no change in GUI state")
             #add viewer to list
 
         def commit_project():
             #bring main window back
             root.update()
-            root.deiconify()
+            #root.deiconify()
 
             self.project_name = projWin.e1.get()
             self.project_description = projWin.e2.get()
             self.project_ownerID = projWin.e3.get()
             #self.project_associatedTasks = 
-            self.project_taskName = projWin.e4.get()
+            #self.project_taskName = projWin.e4.get()
             self.project_taskDueDate = projWin.e5.get()
-            self.project_dueDate = projWin.e6.get()
-            self.project_viewerID = projWin.e7.get()
+            #self.project_dueDate = projWin.e6.get()
+            #self.project_viewerID = projWin.e7.get()
 
-            print("commit project")
+            print("accept projWin -> populate tasks")
+            self.generate_task_window()
+            self.currWindow = "main"
             projWin.destroy()
             #add project to dictionary
 
@@ -590,30 +654,85 @@ class MainWindow(Frame):
             root.update()
             root.deiconify()
 
-            print("cancel project")
+            print("cancel projWin -> back to main")
+            self.currWindow = "main"
             projWin.destroy()
 
             
-        projWin.taskButton = tk.Button(projWin, text="Add Task", command=commit_task)
-        projWin.taskButton.grid(row=6, column=2, padx=6, pady=6, sticky=W)
-        projWin.viewerButton = tk.Button(projWin, text="Add Viewer", command=commit_viewer)
-        projWin.viewerButton.grid(row=8, column=2, padx=6, pady=6, sticky=W)
+        #projWin.taskButton = tk.Button(projWin, text="Add Task", command=commit_task)
+        #projWin.taskButton.grid(row=6, column=2, padx=6, pady=6, sticky=W)
+        #projWin.viewerButton = tk.Button(projWin, text="Add Viewer", command=commit_viewer)
+        #projWin.viewerButton.grid(row=8, column=2, padx=6, pady=6, sticky=W)
 
         projWin.acceptButton = tk.Button(projWin, text="Accept", command=commit_project)
         projWin.cancelButton = tk.Button(projWin, text="Cancel", command=cancel_project)
-        projWin.acceptButton.grid(row=9, column=0, padx=6, pady=6, sticky=W)
-        projWin.cancelButton.grid(row=9, column=1, padx=6, pady=6, sticky=W)
+        projWin.acceptButton.grid(row=5, column=0, padx=6, pady=6, sticky=W)
+        projWin.cancelButton.grid(row=5, column=1, padx=6, pady=6, sticky=W)
+
+    #add viewer window
+    def create_add_viewer_window(self, root):
+        #root.iconify()
+        self.counter += 1
+        retProjectViewerName = StringVar()
+        retProjectViewerID = StringVar()
+        shareProjWin = tk.Toplevel(self)
+        shareProjWin.geometry('390x180+400+320')
+        shareProjWin.wm_title("Add Viewers to Project")
+        root.withdraw() #hide parent window
+        tk.Label(shareProjWin, text="Enter Viewer Information:").grid(row=0, column=0, padx=6, pady=6, sticky=W)
+        tk.Label(shareProjWin, text="User Name:").grid(row=1, column=0, padx=6, pady=6, sticky=E)
+        tk.Label(shareProjWin, text="User ID:").grid(row=2, column=0, padx=6, pady=6, sticky=E)
+        
+        shareProjWin.e1 = tk.Entry(shareProjWin, textvariable=retProjectViewerName)
+        shareProjWin.e1.focus_set()
+        shareProjWin.e2 = tk.Entry(shareProjWin, textvariable=retProjectViewerID)
+        
+        
+        shareProjWin.e1.grid(row=1, column=1, padx=6, pady=6, sticky=W)
+        shareProjWin.e2.grid(row=2, column=1, padx=6, pady=6, sticky=W)
+
+        def add_viewer():
+            #add viewer to list
+            print("add viewer to project")
+
+        def commit_viewers():
+            #bring main window back
+            root.update()
+            root.deiconify()
+
+            self.shareProj_userName = shareProjWin.e1.get()
+            self.shareProj_userID = shareProjWin.e2.get()
+            print("accept addViewers -> back to main")
+            #root.update() focus_set
+            self.currWindow = "main"
+            shareProjWin.destroy()
+
+        def cancel_viewers():
+            #bring main window back
+            root.update()
+            root.deiconify()
+
+            print("cancel addViewers")
+            self.currWindow = "main"
+            shareProjWin.destroy()
+    
+        shareProjWin.addButton = tk.Button(shareProjWin, text="Add Viewer", command=add_viewer)
+        shareProjWin.acceptButton = tk.Button(shareProjWin, text="Accept", command=commit_viewers)
+        shareProjWin.cancelButton = tk.Button(shareProjWin, text="Cancel", command=cancel_viewers)
+        shareProjWin.addButton.grid(row=3, column=1, padx=6, pady=6, sticky=W)
+        shareProjWin.acceptButton.grid(row=4, column=1, padx=6, pady=6, sticky=W)
+        shareProjWin.cancelButton.grid(row=4, column=1, padx=6, pady=6, sticky=E)
 
     #share project window
     def create_share_project_window(self):
-        #root.iconify()
+        #self.master.iconify()
         self.counter += 1
         retProjectSharerName = StringVar()
         retProjectSharerID = StringVar()
         shareProjWin = tk.Toplevel(self)
         shareProjWin.geometry('390x140+400+320')
         shareProjWin.wm_title("Share Project")
-        root.withdraw() #hide parent window
+        self.master.withdraw() #hide parent window
         tk.Label(shareProjWin, text="Enter Shared User Information:").grid(row=0, column=0, padx=6, pady=6, sticky=W)
         tk.Label(shareProjWin, text="User Name:").grid(row=1, column=0, padx=6, pady=6, sticky=E)
         tk.Label(shareProjWin, text="User ID:").grid(row=2, column=0, padx=6, pady=6, sticky=E)
@@ -628,19 +747,19 @@ class MainWindow(Frame):
 
         def commit_share():
             #bring main window back
-            root.update()
-            root.deiconify()
+            self.master.update()
+            self.master.deiconify()
 
             self.shareProj_userName = shareProjWin.e1.get()
             self.shareProj_userID = shareProjWin.e2.get()
             print("share project commit")
-            #root.update() focus_set
+            #self.master.update() focus_set
             shareProjWin.destroy()
 
         def cancel_share():
             #bring main window back
-            root.update()
-            root.deiconify()
+            self.master.update()
+            self.master.deiconify()
 
             print("cancel login")
             shareProjWin.destroy()
@@ -650,17 +769,17 @@ class MainWindow(Frame):
         shareProjWin.acceptButton.grid(row=3, column=1, padx=6, pady=6, sticky=W)
         shareProjWin.cancelButton.grid(row=3, column=1, padx=6, pady=6, sticky=E)
 
-    def __init__(self,master=None):
+    def __init__(self, handler, master=None):
         Frame.__init__(self,master)
         #self.wm_title('Task Commander Test GUI')
         self.grid(sticky=ALL)
         self.firstRun = True
-
-        w = root.winfo_screenwidth()
+        self.handler = handler
+        w = self.master.winfo_screenwidth()
         w = int(w/6)
-        h = root.winfo_screenheight()
+        h = self.master.winfo_screenheight()
         h = int(h/6)
-        root.geometry("935x360" + "+" + str(w) + "+" + str(h))
+        self.master.geometry("935x360" + "+" + str(w) + "+" + str(h))
 
 
         #firstRun set to True only directly after initial execution to display login window FIRST
@@ -761,9 +880,9 @@ class MainWindow(Frame):
         self.tree.heading('#0', text = 'Path', anchor = 'w')
         self.tree.pack(in_=myframe2, expand=YES, fill=BOTH)
         abspath = "Project 1"
-        root_node = self.tree.insert('', 'end', text = abspath, open= True)
+        self.master_node = self.tree.insert('', 'end', text = abspath, open= True)
         self.tree.bind("<Double-1>", self.OnDoubleClick)
-        self.process_projects(root_node)
+        self.process_projects(self.master_node)
 
         myframe2.grid(row=1,column=2,rowspan=1,columnspan=1,sticky=ALL)
 
@@ -839,16 +958,12 @@ class MainWindow(Frame):
         myLabels = Label(titleFrame, textvariable=self.projText).grid(column=1, row=2)
 
     
-
-
-
-
-if __name__ == "__main__":
+def launch_view(master_handler):
     root = tk.Tk()
     #set main window size and placement according to screen size
-    #rootsize tuple(int(_) for _ in root.geometry().split('+')[0].split('x'))
-    #root.geometry('900x400+40+80' % (rootsize + (()))
-    app = MainWindow(root)
+    #self.mastersize tuple(int(_) for _ in self.master.geometry().split('+')[0].split('x'))
+    #self.master.geometry('900x400+40+80' % (self.mastersize + (()))
+    app = MainWindow(master_handler, root)
     root.wm_title('Welcome to Task Commander BETA!')
     app.mainloop()
 
